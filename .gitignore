@@ -1,0 +1,58 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Next.js build
+frontend/.next/
+frontend/out/
+.next/
+out/
+
+# Cloudflare & OpenNext
+.wrangler/
+.open-next/
+
+# Production & Local Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+!*.env.example
+
+# WordPress Core & Uploads (WordPress core/uploads must never be committed)
+backend/wordpress/wp-admin/
+backend/wordpress/wp-includes/
+backend/wordpress/wp-content/uploads/
+backend/wordpress/wp-content/upgrade/
+backend/wordpress/wp-config.php
+backend/wordpress/license.txt
+backend/wordpress/readme.html
+backend/local/data/
+
+# Logs & Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+*.log
+
+# OS & Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Testing coverage & reports
+coverage/
+test-results/
+playwright-report/
+blob-report/
+
+# AI Harness / Local caches
+.gemini/
+.agent/
+.impeccable/
+
