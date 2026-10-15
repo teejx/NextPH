@@ -132,9 +132,20 @@ export function transformWPPost(post: WPPostRaw): Article {
     slug: 'general',
   };
 
+  // Extract featured image from embedded media or first inline content image
+  let contentImgUrl: string | null = null;
+  if (!mediaEmbedded?.source_url && post.content?.rendered) {
+    const match = post.content.rendered.match(/<img[^>]+src=["']([^"']+)["']/i);
+    if (match && match[1]) {
+      contentImgUrl = match[1];
+    }
+  }
+
   const featuredImgUrl =
     mediaEmbedded?.source_url ||
     mediaEmbedded?.media_details?.sizes?.large?.source_url ||
+    mediaEmbedded?.media_details?.sizes?.full?.source_url ||
+    contentImgUrl ||
     'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=80';
 
   const titleClean = decodeHtmlEntities(post.title?.rendered || 'Untitled Dispatch');
@@ -296,7 +307,7 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
  */
 export async function getTrendingStories(limit: number = 6): Promise<Article[]> {
   try {
-    const res = await fetch(`${WP_API_URL}/nextph/v1/trending?limit=${limit}`, {
+    const res = await fetch(`${WP_API_URL}/nextph/v1/trending?limit=${limit}&_embed=1`, {
       next: { revalidate: 120 },
     });
 
@@ -311,24 +322,34 @@ export async function getTrendingStories(limit: number = 6): Promise<Article[]> 
 }
 
 /**
- * Fetch featured story for the hero placement.
+ * Fetch featured stories for the hero placement carousel.
  */
-export async function getFeaturedStory(): Promise<Article | null> {
+export async function getFeaturedStories(limit: number = 4): Promise<Article[]> {
   try {
-    // First try querying post marked _nextph_is_featured
-    const res = await fetch(`${WP_API_URL}/wp/v2/posts?per_page=1&_embed=1`, {
+    const res = await fetch(`${WP_API_URL}/wp/v2/posts?per_page=${limit}&_embed=1`, {
       next: { revalidate: 120 },
     });
     if (res.ok) {
       const rawPosts: WPPostRaw[] = await res.json();
       if (rawPosts.length > 0) {
-        return transformWPPost(rawPosts[0]);
+        return rawPosts.map(transformWPPost);
       }
     }
   } catch {
     // fallback
   }
 
-  const sampleFeatured = SAMPLE_FIXTURES.find((a) => a.isFeatured) || SAMPLE_FIXTURES[0];
-  return sampleFeatured || null;
+  const sampleFeatured = SAMPLE_FIXTURES.filter((a) => a.isFeatured);
+  if (sampleFeatured.length > 0) {
+    return sampleFeatured.slice(0, limit);
+  }
+  return SAMPLE_FIXTURES.slice(0, limit);
+}
+
+/**
+ * Fetch single featured story for fallback hero placement.
+ */
+export async function getFeaturedStory(): Promise<Article | null> {
+  const stories = await getFeaturedStories(1);
+  return stories[0] || null;
 }

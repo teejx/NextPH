@@ -1,28 +1,29 @@
 import React from 'react';
 import Link from 'next/link';
-import { ArrowRight, Compass, Cpu, Sparkles } from 'lucide-react';
-import { getArticles, getFeaturedStory, getTrendingStories } from '../lib/wordpress/client';
+import { ArrowRight } from 'lucide-react';
+import { getArticles, getFeaturedStories, getTrendingStories } from '../lib/wordpress/client';
 import { HeroSection } from '../components/HeroSection';
 import { CategoryStrip } from '../components/CategoryStrip';
 import { LatestGridSection } from '../components/LatestGridSection';
 import { StoryCard } from '../components/StoryCard';
 import { AdSlot } from '../components/AdSlot';
+import { Article } from '../lib/wordpress/types';
 
 export const revalidate = 120; // 2-minute ISR
 
 export default async function HomePage() {
-  const [featuredStory, trendingStories, newsFeed, techFeed, travelFeed, lifestyleFeed, latestFeed] =
+  const [featuredStories, trendingStories, newsFeed, techFeed, travelFeed, lifestyleFeed, latestFeed] =
     await Promise.all([
-      getFeaturedStory(),
-      getTrendingStories(5),
+      getFeaturedStories(4),
+      getTrendingStories(6),
       getArticles({ categorySlug: 'news', perPage: 4 }),
       getArticles({ categorySlug: 'tech', perPage: 4 }),
       getArticles({ categorySlug: 'travel', perPage: 4 }),
       getArticles({ categorySlug: 'lifestyle', perPage: 4 }),
-      getArticles({ perPage: 10 }),
+      getArticles({ perPage: 12 }),
     ]);
 
-  const leadStory = featuredStory || latestFeed.articles[0];
+  const leadStory = featuredStories[0] || latestFeed.articles[0];
 
   if (!leadStory) {
     return (
@@ -35,40 +36,68 @@ export default async function HomePage() {
     );
   }
 
-  // Sidebar stories for hero (exclude lead story if present)
-  const heroSidebar = (
-    trendingStories.length >= 3
-      ? trendingStories
-      : latestFeed.articles.filter((a) => a.id !== leadStory.id)
-  ).slice(0, 3);
+  // Set of IDs used in the hero carousel to prevent immediate duplication in hero sidebar
+  const heroCarouselIds = new Set(featuredStories.map((s) => s.id));
 
-  // Spotlight story for lower 3-column section (different from lead story)
+  // Sidebar stories for hero: Pick up to 3 distinct stories
+  const heroCandidates = [
+    ...trendingStories.filter((a) => !heroCarouselIds.has(a.id)),
+    ...latestFeed.articles.filter((a) => !heroCarouselIds.has(a.id)),
+    ...trendingStories, // fallback if not enough candidates
+  ];
+  const seenHeroSidebarIds = new Set<string>();
+  const heroSidebar: Article[] = [];
+  for (const story of heroCandidates) {
+    if (!seenHeroSidebarIds.has(story.id)) {
+      seenHeroSidebarIds.add(story.id);
+      heroSidebar.push(story);
+      if (heroSidebar.length >= 3) break;
+    }
+  }
+
+  // Spotlight story for lower 3-column section (distinct from hero carousel)
   const spotlightStory =
-    newsFeed.articles.find((a) => a.id !== leadStory.id) ||
-    techFeed.articles.find((a) => a.id !== leadStory.id) ||
-    travelFeed.articles.find((a) => a.id !== leadStory.id) ||
-    latestFeed.articles.find((a) => a.id !== leadStory.id && !heroSidebar.some((s) => s.id === a.id)) ||
+    newsFeed.articles.find((a) => !heroCarouselIds.has(a.id) && !seenHeroSidebarIds.has(a.id)) ||
+    techFeed.articles.find((a) => !heroCarouselIds.has(a.id) && !seenHeroSidebarIds.has(a.id)) ||
+    travelFeed.articles.find((a) => !heroCarouselIds.has(a.id) && !seenHeroSidebarIds.has(a.id)) ||
+    latestFeed.articles.find((a) => !heroCarouselIds.has(a.id) && !seenHeroSidebarIds.has(a.id)) ||
     leadStory;
 
-  // 4 latest stories for lower 3-column section
+  // 4 latest stories for lower 3-column section (excluding spotlight story)
+  const usedForSpotlight = new Set([spotlightStory.id]);
   const latestListStories = latestFeed.articles
-    .filter((a) => a.id !== leadStory.id && a.id !== spotlightStory.id)
+    .filter((a) => !usedForSpotlight.has(a.id))
     .slice(0, 4);
 
-  // Additional curated dispatches from News, Tech & Travel
-  const curatedStories = [
-    ...newsFeed.articles.filter((a) => a.id !== leadStory.id && a.id !== spotlightStory.id).slice(0, 2),
-    ...techFeed.articles.filter((a) => a.id !== leadStory.id && a.id !== spotlightStory.id).slice(0, 2),
-    ...travelFeed.articles.filter((a) => a.id !== leadStory.id && a.id !== spotlightStory.id).slice(0, 2),
-  ].slice(0, 4);
+  // Curated dispatches: strictly de-duplicated by ID to prevent any duplicate key errors
+  const rawCurated = [
+    ...newsFeed.articles.filter((a) => a.id !== spotlightStory.id),
+    ...techFeed.articles.filter((a) => a.id !== spotlightStory.id),
+    ...travelFeed.articles.filter((a) => a.id !== spotlightStory.id),
+    ...lifestyleFeed.articles.filter((a) => a.id !== spotlightStory.id),
+    ...latestFeed.articles.filter((a) => a.id !== spotlightStory.id),
+  ];
+  const seenCuratedIds = new Set<string>();
+  const curatedStories: Article[] = [];
+  for (const story of rawCurated) {
+    if (!seenCuratedIds.has(story.id)) {
+      seenCuratedIds.add(story.id);
+      curatedStories.push(story);
+      if (curatedStories.length >= 4) break;
+    }
+  }
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-16">
       {/* Top Leaderboard Ad Slot (disabled by default) */}
       <AdSlot placement="leaderboard" />
 
-      {/* Main Hero Section: Dark Obsidian Card (8-col) + 3 Stacked Stories (4-col) */}
-      <HeroSection leadStory={leadStory} sidebarStories={heroSidebar} />
+      {/* Main Hero Section: Dark Obsidian Carousel (8-col) + 3 Stacked Stories (4-col) */}
+      <HeroSection
+        leadStory={leadStory}
+        featuredStories={featuredStories}
+        sidebarStories={heroSidebar}
+      />
 
       {/* 4-Card Photographic Category Navigation Strip */}
       <CategoryStrip />
@@ -104,8 +133,12 @@ export default async function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {curatedStories.map((article) => (
-              <StoryCard key={article.id} article={article} variant="standard" />
+            {curatedStories.map((article, idx) => (
+              <StoryCard
+                key={`curated-${article.id}-${idx}`}
+                article={article}
+                variant="standard"
+              />
             ))}
           </div>
         </section>
