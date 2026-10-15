@@ -1,6 +1,4 @@
-'use client';
-
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
@@ -15,98 +13,59 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   leadStory,
   sidebarStories,
 }) => {
-  const initialRatio =
-    leadStory.featuredImage.width && leadStory.featuredImage.height
-      ? leadStory.featuredImage.width / leadStory.featuredImage.height
-      : 1.5;
-
-  const [aspectRatio, setAspectRatio] = useState<number>(initialRatio);
-
-  // Determine image orientation dynamically
-  const isPortrait = aspectRatio < 0.95;
-  const isLandscape = aspectRatio >= 1.2;
-
   return (
     <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch pt-6 pb-10">
       {/* Primary Featured Story Card (Dark Obsidian Container) */}
-      <div className="lg:col-span-8 group relative overflow-hidden rounded-xs bg-[#111113] text-white min-h-[420px] sm:min-h-[460px] flex flex-col justify-between">
-        <div className="grid grid-cols-1 md:grid-cols-12 h-full items-center">
-          {/* Text Content Column */}
-          <div
-            className={`${
-              isLandscape ? 'md:col-span-6' : 'md:col-span-7'
-            } flex flex-col justify-between p-8 sm:p-10 lg:p-12 z-10 h-full`}
-          >
-            <div>
-              <span className="text-[11px] font-bold uppercase tracking-widest text-zinc-400">
-                {leadStory.category.name}
-              </span>
-              <h1 className="mt-4 font-sans text-3xl sm:text-4xl lg:text-5xl font-black leading-tight tracking-tight text-white group-hover:text-zinc-200 transition-colors">
-                <Link href={`/story/${leadStory.slug}`}>
-                  {leadStory.title}
-                </Link>
-              </h1>
-              <p className="mt-4 text-sm sm:text-base text-zinc-300 leading-relaxed line-clamp-3 max-w-md">
-                {leadStory.excerpt}
-              </p>
-            </div>
+      <div className="lg:col-span-8 group relative overflow-hidden rounded-xs bg-[#111113] text-white min-h-[440px] sm:min-h-[480px] flex flex-col justify-between">
+        {/* Right-side Image: fully occupies the right side (top to bottom) and fades into black on the left */}
+        <Link
+          href={`/story/${leadStory.slug}`}
+          className="absolute right-0 top-0 bottom-0 w-full md:w-[58%] lg:w-[60%] h-full overflow-hidden block"
+        >
+          <Image
+            src={leadStory.featuredImage.url}
+            alt={leadStory.featuredImage.alt || leadStory.title}
+            fill
+            priority
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-103"
+          />
+          {/* Smooth directional fade into solid black on the left side */}
+          <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-[#111113] via-[#111113]/70 via-30% to-transparent pointer-events-none" />
+        </Link>
 
-            <div className="mt-8 flex items-center justify-between">
-              <Link
-                href={`/story/${leadStory.slug}`}
-                className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white transition-transform hover:translate-x-1"
-              >
-                <span>Read More</span>
-                <ArrowRight className="h-3.5 w-3.5" />
+        {/* Left-side Text Content Column */}
+        <div className="relative z-10 flex flex-col justify-between p-8 sm:p-10 lg:p-12 w-full md:w-[60%] lg:w-[55%] min-h-[440px] sm:min-h-[480px] pointer-events-none">
+          <div className="pointer-events-auto">
+            <span className="text-[11px] font-bold uppercase tracking-widest text-zinc-400">
+              {leadStory.category.name}
+            </span>
+            <h1 className="mt-4 font-sans text-3xl sm:text-4xl lg:text-5xl font-black leading-tight tracking-tight text-white group-hover:text-zinc-200 transition-colors">
+              <Link href={`/story/${leadStory.slug}`}>
+                {leadStory.title}
               </Link>
-
-              {/* Slider dots indicator */}
-              <div className="flex items-center gap-1.5" aria-hidden="true">
-                <span className="h-2 w-2 rounded-full bg-white"></span>
-                <span className="h-2 w-2 rounded-full bg-zinc-600"></span>
-                <span className="h-2 w-2 rounded-full bg-zinc-600"></span>
-                <span className="h-2 w-2 rounded-full bg-zinc-600"></span>
-              </div>
-            </div>
+            </h1>
+            <p className="mt-4 text-sm sm:text-base text-zinc-300 leading-relaxed line-clamp-3 max-w-md">
+              {leadStory.excerpt}
+            </p>
           </div>
 
-          {/* Flexible Image Column: Adapts to Landscape or Portrait */}
-          <div
-            className={`${
-              isLandscape ? 'md:col-span-6' : 'md:col-span-5'
-            } relative flex items-center justify-center p-6 sm:p-8 lg:p-10 h-full min-h-[300px] md:min-h-full`}
-          >
+          <div className="mt-8 flex items-center justify-between pointer-events-auto">
             <Link
               href={`/story/${leadStory.slug}`}
-              className={`relative overflow-hidden transition-all duration-500 ease-out hover:scale-[1.02] flex items-center justify-center ${
-                isPortrait
-                  ? 'w-full max-w-[260px] sm:max-w-[300px] aspect-3/4 sm:aspect-2/3 rounded-xs border-2 border-zinc-600/80 shadow-2xl ring-1 ring-white/10 bg-zinc-950'
-                  : isLandscape
-                  ? 'w-full aspect-16/10 sm:aspect-16/9 rounded-xs border border-zinc-700/60 shadow-xl bg-zinc-950'
-                  : 'w-full aspect-square max-w-[340px] rounded-xs border border-zinc-700/60 shadow-xl bg-zinc-950'
-              }`}
+              className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white transition-transform hover:translate-x-1"
             >
-              <Image
-                src={leadStory.featuredImage.url}
-                alt={leadStory.featuredImage.alt || leadStory.title}
-                fill
-                priority
-                sizes="(max-width: 768px) 100vw, 45vw"
-                className={`${
-                  isPortrait
-                    ? 'object-cover object-center'
-                    : isLandscape
-                    ? 'object-contain sm:object-cover object-center'
-                    : 'object-cover object-center'
-                } transition-transform duration-700 ease-out group-hover:scale-103`}
-                onLoad={(e) => {
-                  const img = e.currentTarget;
-                  if (img.naturalWidth && img.naturalHeight) {
-                    setAspectRatio(img.naturalWidth / img.naturalHeight);
-                  }
-                }}
-              />
+              <span>Read More</span>
+              <ArrowRight className="h-3.5 w-3.5" />
             </Link>
+
+            {/* Slider dots indicator */}
+            <div className="flex items-center gap-1.5" aria-hidden="true">
+              <span className="h-2 w-2 rounded-full bg-white"></span>
+              <span className="h-2 w-2 rounded-full bg-zinc-600"></span>
+              <span className="h-2 w-2 rounded-full bg-zinc-600"></span>
+              <span className="h-2 w-2 rounded-full bg-zinc-600"></span>
+            </div>
           </div>
         </div>
       </div>
