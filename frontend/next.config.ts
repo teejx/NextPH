@@ -6,6 +6,30 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
+        hostname: 'secure.gravatar.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.gravatar.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'gravatar.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.wp.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.wordpress.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 's.w.org',
+      },
+      {
+        protocol: 'https',
         hostname: 'cms.nextph.example',
       },
       {
