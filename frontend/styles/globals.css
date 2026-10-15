@@ -1,46 +1,31 @@
 @import "tailwindcss";
 
 :root {
-  --color-ground: #FBF9F5;
-  --color-ground-elevated: #FFFFFF;
-  --color-ground-subdued: #F3EFEA;
-  --color-ink-primary: #141312;
-  --color-ink-secondary: #4A4642;
-  --color-ink-muted: #76716B;
-  --color-border-subtle: #E8E4DD;
-  --color-border-strong: #CCC7BD;
-  --color-accent: #C43622;
-  --color-accent-hover: #A62B1A;
-  --color-accent-subdued: #FDF1EE;
-
-  --font-serif: var(--font-editorial-serif), Georgia, Cambria, 'Times New Roman', serif;
-  --font-sans: var(--font-editorial-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --color-ground: #FFFFFF;
+  --color-dark-surface: #111113;
+  --color-ground-subdued: #F4F4F5;
+  --color-ink-primary: #09090B;
+  --color-ink-secondary: #52525B;
+  --color-ink-muted: #71717A;
+  --color-border-subtle: #E4E4E7;
+  --color-border-strong: #27272A;
+  --color-accent: #09090B;
 }
 
 body {
   background-color: var(--color-ground);
   color: var(--color-ink-primary);
-  font-family: var(--font-sans);
+  font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Editorial typography utilities */
-.font-serif {
-  font-family: var(--font-serif);
-}
-
-.font-sans {
-  font-family: var(--font-sans);
-}
-
-/* Custom scrollbars and focus rings themed from palette */
 :focus-visible {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid #09090B;
   outline-offset: 2px;
 }
 
 ::selection {
-  background-color: var(--color-accent-subdued);
-  color: var(--color-accent-hover);
+  background-color: #18181B;
+  color: #FFFFFF;
 }

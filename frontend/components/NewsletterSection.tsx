@@ -58,26 +58,26 @@ export const NewsletterSection: React.FC = () => {
   return (
     <section
       aria-labelledby="newsletter-heading"
-      className="my-16 border-y border-[#CCC7BD] bg-[#F3EFEA] py-12 px-6 sm:px-12 rounded-sm"
+      className="my-16 border-y border-zinc-200 bg-zinc-50 py-12 px-6 sm:px-12 rounded-xs"
     >
       <div className="mx-auto max-w-3xl text-center">
-        <div className="inline-flex items-center gap-2 rounded-full bg-[#FDF1EE] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[#C43622]">
-          <Mail className="h-3.5 w-3.5" />
+        <div className="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white px-3.5 py-1 text-[11px] font-bold uppercase tracking-widest text-zinc-700">
+          <Mail className="h-3.5 w-3.5 text-zinc-900" />
           The Next Dispatch
         </div>
-        <h2 id="newsletter-heading" className="mt-4 text-2xl sm:text-3xl font-serif font-bold tracking-tight text-[#141312]">
+        <h2 id="newsletter-heading" className="mt-4 text-2xl sm:text-3xl font-sans font-black tracking-tight text-zinc-950">
           Curated Filipino stories, delivered with editorial rigor.
         </h2>
-        <p className="mt-3 text-sm sm:text-base text-[#4A4642]">
+        <p className="mt-3 text-sm sm:text-base text-zinc-600">
           Join thousands of discerning readers who receive our weekly briefing covering technology breakthroughs, archipelago journeys, and contemporary culture.
         </p>
 
         {status === 'success' ? (
-          <div className="mt-8 flex items-center justify-center gap-3 rounded-md bg-white p-6 border border-green-200 text-left shadow-xs">
-            <CheckCircle2 className="h-6 w-6 text-green-600 shrink-0" />
+          <div className="mt-8 flex items-center justify-center gap-3 rounded-xs bg-white p-6 border border-zinc-200 text-left shadow-xs">
+            <CheckCircle2 className="h-6 w-6 text-zinc-950 shrink-0" />
             <div>
-              <h3 className="text-sm font-bold text-[#141312]">Subscription Confirmed</h3>
-              <p className="text-xs text-[#4A4642] mt-0.5">{feedbackMessage}</p>
+              <h3 className="text-sm font-bold text-zinc-950">Subscription Confirmed</h3>
+              <p className="text-xs text-zinc-600 mt-0.5">{feedbackMessage}</p>
             </div>
           </div>
         ) : (
@@ -108,13 +108,13 @@ export const NewsletterSection: React.FC = () => {
                   placeholder="Enter your email (e.g. editor@nextph.ph)"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full rounded-sm border border-[#CCC7BD] bg-white px-4 py-3 text-sm text-[#141312] placeholder-[#76716B] transition-colors focus:border-[#C43622] focus:outline-hidden"
+                  className="w-full rounded-xs border border-zinc-300 bg-white px-4 py-3 text-sm text-zinc-950 placeholder-zinc-400 transition-colors focus:border-zinc-950 focus:ring-2 focus:ring-zinc-950 focus:outline-hidden"
                 />
               </div>
               <button
                 type="submit"
                 disabled={status === 'loading'}
-                className="inline-flex items-center justify-center rounded-sm bg-[#141312] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#C43622] disabled:opacity-50 shrink-0 focus-visible:outline-2 focus-visible:outline-[#C43622]"
+                className="inline-flex items-center justify-center rounded-xs bg-zinc-950 px-6 py-3 text-xs font-bold uppercase tracking-wider text-white transition-colors hover:bg-black disabled:opacity-50 shrink-0 focus-visible:outline-2 focus-visible:outline-zinc-950"
               >
                 {status === 'loading' ? (
                   <>
@@ -133,11 +133,11 @@ export const NewsletterSection: React.FC = () => {
                 id="newsletter-consent"
                 checked={consent}
                 onChange={(e) => setConsent(e.target.checked)}
-                className="mt-1 h-4 w-4 rounded-xs border-[#CCC7BD] text-[#C43622] focus:ring-[#C43622]"
+                className="mt-1 h-4 w-4 rounded-xs border-zinc-300 text-zinc-950 focus:ring-zinc-950"
               />
-              <label htmlFor="newsletter-consent" className="text-xs text-[#76716B]">
+              <label htmlFor="newsletter-consent" className="text-xs text-zinc-500">
                 I consent to receive weekly editorial newsletters from NextPH. Unsubscribe at any time. Read our{' '}
-                <Link href="/privacy-policy" className="underline hover:text-[#141312]">
+                <Link href="/privacy-policy" className="underline hover:text-zinc-950">
                   Privacy Policy
                 </Link>
                 .
@@ -145,7 +145,7 @@ export const NewsletterSection: React.FC = () => {
             </div>
 
             {status === 'error' && (
-              <div className="mt-3 flex items-center gap-2 text-xs font-medium text-[#C43622]" role="alert">
+              <div className="mt-3 flex items-center gap-2 text-xs font-medium text-red-600" role="alert">
                 <AlertCircle className="h-4 w-4 shrink-0" />
                 <span>{feedbackMessage}</span>
               </div>

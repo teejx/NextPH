@@ -32,12 +32,12 @@ export default async function TechCategoryPage({ searchParams }: PageProps) {
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       {/* Category Header */}
-      <header className="border-b border-[#CCC7BD] pb-8 pt-4">
-        <span className="text-xs font-bold uppercase tracking-widest text-[#C43622]">Category Archive</span>
-        <h1 className="mt-2 font-serif text-3xl sm:text-5xl font-bold tracking-tight text-[#141312]">
+      <header className="border-b border-zinc-200 pb-8 pt-4">
+        <span className="text-[11px] font-bold uppercase tracking-widest text-zinc-400">Category Archive</span>
+        <h1 className="mt-2 font-sans text-3xl sm:text-5xl font-black tracking-tight text-zinc-950">
           Technology & Innovation
         </h1>
-        <p className="mt-3 text-base text-[#4A4642] max-w-2xl">
+        <p className="mt-3 text-sm sm:text-base text-zinc-600 max-w-2xl leading-relaxed">
           Tracking the digital transformation of the Philippines: open finance, startup ecosystems, telecom infrastructure, and emerging technologies.
         </p>
       </header>
@@ -56,7 +56,7 @@ export default async function TechCategoryPage({ searchParams }: PageProps) {
             <Pagination currentPage={currentPage} totalPages={totalPages} basePath="/tech" />
           </>
         ) : (
-          <div className="py-16 text-center text-[#76716B]">No stories found in this section yet.</div>
+          <div className="py-16 text-center text-zinc-400">No stories found in this section yet.</div>
         )}
       </main>
 

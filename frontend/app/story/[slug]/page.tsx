@@ -133,42 +133,42 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
 
       <article className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Breadcrumb Navigation */}
-        <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-[#76716B]">
-          <Link href="/" className="hover:text-[#141312] hover:underline">
+        <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-zinc-400">
+          <Link href="/" className="hover:text-zinc-950 transition-colors">
             Home
           </Link>
-          <ChevronRight className="h-3 w-3 text-[#CCC7BD]" />
-          <Link href={`/${article.category.slug}`} className="hover:text-[#141312] hover:underline">
+          <ChevronRight className="h-3 w-3 text-zinc-300" />
+          <Link href={`/${article.category.slug}`} className="hover:text-zinc-950 transition-colors">
             {article.category.name}
           </Link>
-          <ChevronRight className="h-3 w-3 text-[#CCC7BD]" />
-          <span className="text-[#141312] font-medium truncate max-w-xs">{article.title}</span>
+          <ChevronRight className="h-3 w-3 text-zinc-300" />
+          <span className="text-zinc-700 truncate max-w-xs">{article.title}</span>
         </nav>
 
         {/* Story Header */}
-        <header className="mt-6 border-b border-[#E8E4DD] pb-8">
+        <header className="mt-6 border-b border-zinc-200 pb-8">
           <Link
             href={`/${article.category.slug}`}
-            className="inline-block rounded-xs bg-[#FDF1EE] px-2.5 py-1 text-xs font-bold uppercase tracking-wider text-[#C43622]"
+            className="inline-block text-[11px] font-bold uppercase tracking-widest text-zinc-500 hover:text-black transition-colors"
           >
             {article.category.name}
           </Link>
 
-          <h1 className="mt-4 font-serif text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight tracking-tight text-[#141312]">
+          <h1 className="mt-3 font-sans text-3xl sm:text-4xl lg:text-5xl font-black leading-tight tracking-tight text-zinc-950">
             {article.title}
           </h1>
 
           {article.excerpt && (
-            <p className="mt-4 text-lg sm:text-xl text-[#4A4642] leading-relaxed">
+            <p className="mt-4 text-lg sm:text-xl text-zinc-600 leading-relaxed font-light">
               {article.excerpt}
             </p>
           )}
 
           {/* Author & Timestamps Metadata Bar */}
-          <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-[#E8E4DD] pt-4 text-xs text-[#76716B]">
+          <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-zinc-200 pt-4 text-xs text-zinc-500">
             <div className="flex items-center gap-3">
               {article.author.avatarUrl && (
-                <div className="relative h-10 w-10 overflow-hidden rounded-full bg-[#E8E4DD]">
+                <div className="relative h-10 w-10 overflow-hidden rounded-full bg-zinc-100">
                   <Image
                     src={article.author.avatarUrl}
                     alt={article.author.name}
@@ -179,26 +179,26 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
                 </div>
               )}
               <div>
-                <span className="block font-semibold text-[#141312]">{article.author.name}</span>
-                <span className="text-[11px] text-[#76716B]">NextPH Staff Reporter</span>
+                <span className="block font-bold text-zinc-950">{article.author.name}</span>
+                <span className="text-[10px] uppercase tracking-wider text-zinc-400">NextPH Editorial</span>
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-4">
+            <div className="flex flex-wrap items-center gap-4 text-zinc-500">
               <div className="flex items-center gap-1.5" title="Published date">
-                <Calendar className="h-3.5 w-3.5" />
-                <span>Published {formattedPublishDate}</span>
+                <Calendar className="h-3.5 w-3.5 text-zinc-400" />
+                <span>{formattedPublishDate}</span>
               </div>
 
               {article.updatedAt !== article.publishedAt && (
-                <div className="flex items-center gap-1.5 text-[#4A4642]" title="Last updated date">
-                  <RefreshCw className="h-3 w-3" />
+                <div className="flex items-center gap-1.5 text-zinc-500" title="Last updated date">
+                  <RefreshCw className="h-3 w-3 text-zinc-400" />
                   <span>Updated {formattedUpdateDate}</span>
                 </div>
               )}
 
               <div className="flex items-center gap-1.5" title="Estimated reading time">
-                <Clock className="h-3.5 w-3.5" />
+                <Clock className="h-3.5 w-3.5 text-zinc-400" />
                 <span>{article.readingTimeMinutes} min read</span>
               </div>
             </div>
@@ -209,7 +209,7 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
         <AdSlot placement="leaderboard" />
 
         {/* Hero Featured Media */}
-        <figure className="my-8 overflow-hidden rounded-sm bg-[#F3EFEA]">
+        <figure className="my-8 overflow-hidden rounded-xs bg-zinc-100">
           <div className="relative aspect-16/10 w-full overflow-hidden">
             <Image
               src={article.featuredImage.url}
@@ -221,7 +221,7 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
             />
           </div>
           {article.featuredImage.alt && (
-            <figcaption className="bg-[#F3EFEA] px-4 py-2.5 text-xs text-[#76716B]">
+            <figcaption className="bg-zinc-50 px-4 py-2.5 text-xs text-zinc-500">
               Photo: {article.featuredImage.alt}
             </figcaption>
           )}
@@ -234,26 +234,28 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
 
         {/* Article Body Content */}
         <div
-          className="prose prose-neutral max-w-none text-[#141312] leading-relaxed text-base sm:text-lg
+          className="prose prose-zinc max-w-none text-zinc-900 leading-relaxed text-base sm:text-lg
             [&>p]:my-6 [&>p]:leading-relaxed
-            [&>h2]:font-serif [&>h2]:text-2xl [&>h2]:sm:text-3xl [&>h2]:font-bold [&>h2]:mt-10 [&>h2]:mb-4
-            [&>blockquote]:my-8 [&>blockquote]:border-l-2 [&>blockquote]:border-[#C43622] [&>blockquote]:pl-6 [&>blockquote]:font-serif [&>blockquote]:italic [&>blockquote]:text-xl [&>blockquote]:text-[#4A4642]
+            [&>h2]:font-sans [&>h2]:text-2xl [&>h2]:sm:text-3xl [&>h2]:font-black [&>h2]:mt-10 [&>h2]:mb-4 [&>h2]:tracking-tight
+            [&>blockquote]:my-8 [&>blockquote]:border-l-2 [&>blockquote]:border-zinc-900 [&>blockquote]:pl-6 [&>blockquote]:font-sans [&>blockquote]:font-semibold [&>blockquote]:text-xl [&>blockquote]:text-zinc-800
             [&>ul]:my-6 [&>ul]:list-disc [&>ul]:pl-6
             [&>ol]:my-6 [&>ol]:list-decimal [&>ol]:pl-6
-            [&>figure]:my-8 [&>figure>img]:rounded-sm"
+            [&>figure]:my-8 [&>figure>img]:rounded-xs"
           dangerouslySetInnerHTML={{ __html: article.contentHtml }}
         />
 
         {/* Tags Row */}
         {article.tags.length > 0 && (
-          <div className="mt-12 border-t border-[#CCC7BD] pt-6">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-[#76716B] mb-3">Related Topics</h3>
+          <div className="mt-12 border-t border-zinc-200 pt-6">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 block mb-3">
+              Related Topics
+            </span>
             <div className="flex flex-wrap gap-2">
               {article.tags.map((tag) => (
                 <Link
                   key={tag.id}
                   href={`/tag/${tag.slug}`}
-                  className="rounded-full border border-[#CCC7BD] bg-white px-3.5 py-1 text-xs font-medium text-[#141312] hover:border-[#C43622] hover:text-[#C43622]"
+                  className="rounded-full border border-zinc-200 bg-white px-3.5 py-1 text-xs font-bold text-zinc-900 transition-colors hover:border-zinc-950 hover:bg-zinc-950 hover:text-white"
                 >
                   #{tag.name}
                 </Link>
@@ -263,15 +265,15 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
         )}
 
         {/* Social Sharing Controls */}
-        <div className="mt-8 border-t border-[#E8E4DD] pt-2">
+        <div className="mt-8 border-t border-zinc-200 pt-4">
           <ShareButtons title={article.title} url={storyUrl} />
         </div>
 
         {/* Author Bio Box */}
         {article.author.bio && (
-          <div className="mt-10 rounded-sm border border-[#CCC7BD] bg-[#F3EFEA] p-6 flex flex-col sm:flex-row items-center sm:items-start gap-4 text-center sm:text-left">
+          <div className="mt-10 rounded-xs border border-zinc-200 bg-zinc-50 p-6 flex flex-col sm:flex-row items-center sm:items-start gap-4 text-center sm:text-left">
             {article.author.avatarUrl && (
-              <div className="relative h-16 w-16 overflow-hidden rounded-full bg-[#CCC7BD] shrink-0">
+              <div className="relative h-16 w-16 overflow-hidden rounded-full bg-zinc-200 shrink-0">
                 <Image
                   src={article.author.avatarUrl}
                   alt={article.author.name}
@@ -282,18 +284,23 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
               </div>
             )}
             <div>
-              <h4 className="text-sm font-bold text-[#141312]">About {article.author.name}</h4>
-              <p className="mt-1 text-xs text-[#4A4642] leading-relaxed">{article.author.bio}</p>
+              <h4 className="text-sm font-bold text-zinc-950">About {article.author.name}</h4>
+              <p className="mt-1 text-xs text-zinc-600 leading-relaxed">{article.author.bio}</p>
             </div>
           </div>
         )}
 
         {/* Related Stories */}
         {filteredRelated.length > 0 && (
-          <section className="mt-16 border-t border-[#CCC7BD] pt-10" aria-labelledby="related-heading">
-            <h2 id="related-heading" className="font-serif text-2xl font-bold tracking-tight text-[#141312] mb-6">
-              More Stories in {article.category.name}
-            </h2>
+          <section className="mt-16 border-t border-zinc-200 pt-10" aria-labelledby="related-heading">
+            <div className="mb-6">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">
+                Continue Reading
+              </span>
+              <h2 id="related-heading" className="font-sans text-xl sm:text-2xl font-black text-zinc-950 mt-1">
+                More in {article.category.name}
+              </h2>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {filteredRelated.map((related) => (
                 <StoryCard key={related.id} article={related} variant="standard" />
