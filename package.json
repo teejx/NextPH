@@ -1,0 +1,27 @@
+{
+  "name": "nextph",
+  "version": "1.0.0",
+  "private": true,
+  "description": "NextPH — Modern Filipino Digital Magazine",
+  "scripts": {
+    "dev": "npm run dev --prefix frontend",
+    "build": "npm run build --prefix frontend",
+    "start": "npm run start --prefix frontend",
+    "lint": "npm run lint --prefix frontend",
+    "type-check": "npm run type-check --prefix frontend",
+    "test": "npm test --prefix frontend",
+    "test:watch": "npm run test:watch --prefix frontend",
+    "test:e2e": "npm run test:e2e --prefix frontend"
+  },
+  "keywords": [
+    "nextjs",
+    "react",
+    "wordpress",
+    "headless-cms",
+    "tailwind",
+    "editorial-magazine",
+    "philippines"
+  ],
+  "author": "NextPH Media",
+  "license": "MIT"
+}
