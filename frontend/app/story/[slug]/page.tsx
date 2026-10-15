@@ -209,23 +209,38 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
         <AdSlot placement="leaderboard" />
 
         {/* Hero Featured Media */}
-        <figure className="my-8 overflow-hidden rounded-xs bg-zinc-100">
-          <div className="relative aspect-16/10 w-full overflow-hidden">
-            <Image
-              src={article.featuredImage.url}
-              alt={article.featuredImage.alt || article.title}
-              fill
-              priority
-              sizes="(max-width: 1024px) 100vw, 896px"
-              className="object-cover"
-            />
-          </div>
-          {article.featuredImage.alt && (
-            <figcaption className="bg-zinc-50 px-4 py-2.5 text-xs text-zinc-500">
-              Photo: {article.featuredImage.alt}
-            </figcaption>
-          )}
-        </figure>
+        {(() => {
+          const isPortrait =
+            article.featuredImage.width && article.featuredImage.height
+              ? article.featuredImage.height > article.featuredImage.width * 1.05
+              : false;
+
+          return (
+            <figure className={`my-8 ${isPortrait ? 'flex flex-col items-center' : ''}`}>
+              <div
+                className={`relative overflow-hidden rounded-xs border border-zinc-200 bg-zinc-100 ${
+                  isPortrait
+                    ? 'w-full max-w-md aspect-3/4 sm:aspect-2/3 shadow-xl ring-1 ring-zinc-900/5'
+                    : 'w-full aspect-16/10 sm:aspect-16/9 shadow-xs'
+                }`}
+              >
+                <Image
+                  src={article.featuredImage.url}
+                  alt={article.featuredImage.alt || article.title}
+                  fill
+                  priority
+                  sizes={isPortrait ? '(max-width: 768px) 100vw, 448px' : '(max-width: 1024px) 100vw, 896px'}
+                  className={`${isPortrait ? 'object-cover' : 'object-contain sm:object-cover'}`}
+                />
+              </div>
+              {article.featuredImage.alt && (
+                <figcaption className="mt-2 text-center text-xs text-zinc-500">
+                  Photo: {article.featuredImage.alt}
+                </figcaption>
+              )}
+            </figure>
+          );
+        })()}
 
         {/* Video Embed (if present) */}
         {article.videoEmbedUrl && (
