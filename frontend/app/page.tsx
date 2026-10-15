@@ -11,10 +11,11 @@ import { AdSlot } from '../components/AdSlot';
 export const revalidate = 120; // 2-minute ISR
 
 export default async function HomePage() {
-  const [featuredStory, trendingStories, techFeed, travelFeed, lifestyleFeed, latestFeed] =
+  const [featuredStory, trendingStories, newsFeed, techFeed, travelFeed, lifestyleFeed, latestFeed] =
     await Promise.all([
       getFeaturedStory(),
       getTrendingStories(5),
+      getArticles({ categorySlug: 'news', perPage: 4 }),
       getArticles({ categorySlug: 'tech', perPage: 4 }),
       getArticles({ categorySlug: 'travel', perPage: 4 }),
       getArticles({ categorySlug: 'lifestyle', perPage: 4 }),
@@ -43,6 +44,7 @@ export default async function HomePage() {
 
   // Spotlight story for lower 3-column section (different from lead story)
   const spotlightStory =
+    newsFeed.articles.find((a) => a.id !== leadStory.id) ||
     techFeed.articles.find((a) => a.id !== leadStory.id) ||
     travelFeed.articles.find((a) => a.id !== leadStory.id) ||
     latestFeed.articles.find((a) => a.id !== leadStory.id && !heroSidebar.some((s) => s.id === a.id)) ||
@@ -53,8 +55,9 @@ export default async function HomePage() {
     .filter((a) => a.id !== leadStory.id && a.id !== spotlightStory.id)
     .slice(0, 4);
 
-  // Additional curated dispatches from Tech & Travel
+  // Additional curated dispatches from News, Tech & Travel
   const curatedStories = [
+    ...newsFeed.articles.filter((a) => a.id !== leadStory.id && a.id !== spotlightStory.id).slice(0, 2),
     ...techFeed.articles.filter((a) => a.id !== leadStory.id && a.id !== spotlightStory.id).slice(0, 2),
     ...travelFeed.articles.filter((a) => a.id !== leadStory.id && a.id !== spotlightStory.id).slice(0, 2),
   ].slice(0, 4);

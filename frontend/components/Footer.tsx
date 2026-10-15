@@ -28,6 +28,11 @@ export const Footer: React.FC = () => {
             </h3>
             <ul className="mt-4 space-y-2.5 text-xs">
               <li>
+                <Link href="/news" className="text-zinc-400 hover:text-white transition-colors">
+                  News & Dispatches
+                </Link>
+              </li>
+              <li>
                 <Link href="/tech" className="text-zinc-400 hover:text-white transition-colors">
                   Tech & Telecom
                 </Link>

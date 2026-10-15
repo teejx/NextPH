@@ -248,4 +248,84 @@ export const SAMPLE_FIXTURES: Article[] = [
     isTrending: true,
     videoEmbedUrl: null,
   },
+  {
+    id: 'sample-7',
+    slug: 'philippines-green-energy-grid-expansion-act',
+    title: '[Sample] Philippines Accelerates Renewable Energy Grid Interconnection',
+    excerpt: 'A national policy breakthrough unlocks public-private grid upgrades to channel offshore wind and solar capacity from Visayas directly into Luzon load centers.',
+    contentHtml: `
+      <p class="lead">The Department of Energy announced a unified fast-track mechanism for high-voltage direct current (HVDC) transmission lines connecting regional renewable energy hubs to the national grid.</p>
+      <p>With clean energy targets aiming for 35% by 2030, the strategic grid modernization ensures stranded green power in southern islands reaches high-demand manufacturing zones across Greater Manila.</p>
+      <h2>Strengthening Energy Sovereignty</h2>
+      <p>International climate funds and regional infrastructure lenders have committed blended finance facilities to support submarine cable laying across deep-water straits.</p>
+    `,
+    publishedAt: '2026-10-14T08:00:00Z',
+    updatedAt: '2026-10-14T08:00:00Z',
+    readingTimeMinutes: 4,
+    category: {
+      id: 104,
+      name: 'News',
+      slug: 'news',
+    },
+    tags: [
+      { id: 220, name: 'National News', slug: 'national-news' },
+      { id: 221, name: 'Clean Energy', slug: 'clean-energy' },
+      { id: 222, name: 'Infrastructure', slug: 'infrastructure' },
+    ],
+    author: {
+      id: 1,
+      name: 'Gabriel Morales',
+      slug: 'gabriel-morales',
+      avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80',
+      bio: 'Senior Technology Editor covering emerging Southeast Asian platforms and telecommunications infrastructure.',
+    },
+    featuredImage: {
+      url: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=1600&q=80',
+      alt: 'Electrical transmission towers against dramatic twilight sky representing national grid power',
+      width: 1600,
+      height: 1067,
+    },
+    isFeatured: false,
+    isTrending: true,
+    videoEmbedUrl: null,
+  },
+  {
+    id: 'sample-8',
+    slug: 'asean-digital-trade-pact-manila-summit',
+    title: '[Sample] Manila Summit Concludes with Historic Regional Cross-Border Digital Pact',
+    excerpt: 'Diplomats and trade ministers ink comprehensive paperless trade, regional interoperability standards, and cyber defense protocols in Pasay.',
+    contentHtml: `
+      <p class="lead">Senior trade representatives from all ten ASEAN member nations ratified the updated Digital Economy Framework Agreement in Manila today.</p>
+      <p>The landmark accord streamlines cross-border customs declarations, enables mutual recognition of digital signatures, and establishes shared protocols for rapid response against regional cybersecurity threats.</p>
+    `,
+    publishedAt: '2026-10-13T14:30:00Z',
+    updatedAt: '2026-10-13T14:30:00Z',
+    readingTimeMinutes: 4,
+    category: {
+      id: 104,
+      name: 'News',
+      slug: 'news',
+    },
+    tags: [
+      { id: 220, name: 'National News', slug: 'national-news' },
+      { id: 223, name: 'ASEAN', slug: 'asean' },
+      { id: 224, name: 'Foreign Policy', slug: 'foreign-policy' },
+    ],
+    author: {
+      id: 2,
+      name: 'Sofia Reyes',
+      slug: 'sofia-reyes',
+      avatarUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=256&q=80',
+      bio: 'Travel journalist and documentary photographer focusing on indigenous architecture and environmental preservation.',
+    },
+    featuredImage: {
+      url: 'https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=1600&q=80',
+      alt: 'Diplomatic conference summit hall with national flags and international delegation tables',
+      width: 1600,
+      height: 1067,
+    },
+    isFeatured: false,
+    isTrending: false,
+    videoEmbedUrl: null,
+  },
 ];

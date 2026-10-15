@@ -124,7 +124,7 @@ export function transformWPPost(post: WPPostRaw): Article {
 
   // Pick primary category, prioritizing standard pillars if multiple exist
   const prioritizedPillar = categories.find((c) =>
-    ['tech', 'travel', 'lifestyle'].includes(c.slug.toLowerCase())
+    ['news', 'tech', 'travel', 'lifestyle'].includes(c.slug.toLowerCase())
   );
   const primaryCategory = prioritizedPillar || categories[0] || {
     id: 1,
@@ -242,7 +242,13 @@ export async function getArticles(options: {
 
     if (search) {
       const q = search.toLowerCase();
-      filtered = filtered.filter((a) => a.title.toLowerCase().includes(q) || a.excerpt.toLowerCase().includes(q));
+      filtered = filtered.filter(
+        (a) =>
+          a.title.toLowerCase().includes(q) ||
+          a.excerpt.toLowerCase().includes(q) ||
+          a.category.name.toLowerCase().includes(q) ||
+          a.tags.some((t) => t.name.toLowerCase().includes(q))
+      );
     }
 
     const totalArticles = filtered.length;

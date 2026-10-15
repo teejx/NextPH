@@ -1,9 +1,16 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Laptop, Shirt, Plane, Newspaper, ArrowRight } from 'lucide-react';
+import { Radio, Laptop, Shirt, Plane, Flame, ArrowRight } from 'lucide-react';
 
 const CATEGORIES = [
+  {
+    name: 'NEWS',
+    slug: 'news',
+    icon: Radio,
+    image: 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?auto=format&fit=crop&w=800&q=80',
+    alt: 'Press microphone and broadcast journalism',
+  },
   {
     name: 'TECH',
     slug: 'tech',
@@ -28,7 +35,7 @@ const CATEGORIES = [
   {
     name: 'TRENDING',
     slug: 'trending',
-    icon: Newspaper,
+    icon: Flame,
     image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80',
     alt: 'City skyline and contemporary architecture',
   },
@@ -37,7 +44,7 @@ const CATEGORIES = [
 export const CategoryStrip: React.FC = () => {
   return (
     <section className="py-6" aria-label="Category Navigation">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
         {CATEGORIES.map((cat) => {
           const Icon = cat.icon;
           return (

@@ -9,7 +9,7 @@ export interface WPCategory {
   description: string;
   link: string;
   name: string;
-  slug: 'tech' | 'travel' | 'lifestyle' | string;
+  slug: 'news' | 'tech' | 'travel' | 'lifestyle' | string;
   taxonomy: string;
   parent: number;
 }
