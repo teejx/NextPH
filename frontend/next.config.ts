@@ -20,6 +20,22 @@ const nextConfig: NextConfig = {
         protocol: 'http',
         hostname: '127.0.0.1',
       },
+      {
+        protocol: 'http',
+        hostname: 'nextph-cms.local',
+      },
+      {
+        protocol: 'https',
+        hostname: 'nextph-cms.local',
+      },
+      {
+        protocol: 'http',
+        hostname: '*.local',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.local',
+      },
     ],
   },
 };

@@ -4,6 +4,7 @@ import { getArticles } from '../../lib/wordpress/client';
 import { StoryCard } from '../../components/StoryCard';
 import { NewsletterSection } from '../../components/NewsletterSection';
 import { AdSlot } from '../../components/AdSlot';
+import { Pagination } from '../../components/Pagination';
 
 export const metadata: Metadata = {
   title: 'Technology & Innovation in the Philippines',
@@ -13,8 +14,20 @@ export const metadata: Metadata = {
 
 export const revalidate = 120;
 
-export default async function TechCategoryPage() {
-  const { articles } = await getArticles({ categorySlug: 'tech', perPage: 12 });
+interface PageProps {
+  searchParams: Promise<{
+    page?: string;
+  }>;
+}
+
+export default async function TechCategoryPage({ searchParams }: PageProps) {
+  const { page } = await searchParams;
+  const currentPage = parseInt(page || '1', 10);
+  const { articles, totalPages } = await getArticles({
+    categorySlug: 'tech',
+    page: currentPage,
+    perPage: 9,
+  });
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -34,11 +47,14 @@ export default async function TechCategoryPage() {
       {/* Stories Grid */}
       <main className="mt-10">
         {articles.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {articles.map((article) => (
-              <StoryCard key={article.id} article={article} variant="standard" />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {articles.map((article) => (
+                <StoryCard key={article.id} article={article} variant="standard" />
+              ))}
+            </div>
+            <Pagination currentPage={currentPage} totalPages={totalPages} basePath="/tech" />
+          </>
         ) : (
           <div className="py-16 text-center text-[#76716B]">No stories found in this section yet.</div>
         )}

@@ -4,6 +4,28 @@ import { SAMPLE_FIXTURES } from './fixtures';
 const WP_API_URL = process.env.WORDPRESS_API_URL || 'https://cms.nextph.example/wp-json';
 
 /**
+ * Decode common HTML entities from WordPress post titles and excerpts.
+ */
+export function decodeHtmlEntities(str: string): string {
+  if (!str) return '';
+  return str
+    .replace(/&#8211;/g, '–')
+    .replace(/&#8212;/g, '—')
+    .replace(/&#8216;/g, '‘')
+    .replace(/&#8217;/g, '’')
+    .replace(/&#8220;/g, '“')
+    .replace(/&#8221;/g, '”')
+    .replace(/&#038;/g, '&')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#039;/g, "'")
+    .replace(/&nbsp;/g, ' ')
+    .trim();
+}
+
+/**
  * Sanitize untrusted WordPress block HTML on the server.
  * Edge-compatible (Cloudflare Workers & Next.js ISR safe, zero jsdom/filesystem dependency).
  * Allows standard editorial markup and removes script, iframe, inline event handlers, and malicious URIs.
@@ -63,8 +85,34 @@ export function sanitizeVideoEmbedUrl(url: string | null | undefined): string | 
   }
 }
 
+// In-memory cache for category IDs
+const categoryIdCache: Record<string, number> = {};
+
 /**
- * Transform a raw WordPress REST API post into an Article.
+ * Resolve a category slug to a WordPress category ID.
+ */
+async function getCategoryIdBySlug(slug: string): Promise<number | null> {
+  if (categoryIdCache[slug]) return categoryIdCache[slug];
+
+  try {
+    const res = await fetch(`${WP_API_URL}/wp/v2/categories?slug=${encodeURIComponent(slug)}`, {
+      next: { revalidate: 3600 },
+    });
+    if (res.ok) {
+      const categories: WPCategory[] = await res.json();
+      if (categories.length > 0) {
+        categoryIdCache[slug] = categories[0].id;
+        return categories[0].id;
+      }
+    }
+  } catch {
+    // ignore
+  }
+  return null;
+}
+
+/**
+ * Transform a raw WordPress REST API post into a normalized Article.
  */
 export function transformWPPost(post: WPPostRaw): Article {
   const authorEmbedded = post._embedded?.author?.[0];
@@ -74,7 +122,11 @@ export function transformWPPost(post: WPPostRaw): Article {
   const categories: WPCategory[] = (termsEmbedded[0] as WPCategory[]) || [];
   const tags: WPTag[] = (termsEmbedded[1] as WPTag[]) || [];
 
-  const primaryCategory = categories[0] || {
+  // Pick primary category, prioritizing standard pillars if multiple exist
+  const prioritizedPillar = categories.find((c) =>
+    ['tech', 'travel', 'lifestyle'].includes(c.slug.toLowerCase())
+  );
+  const primaryCategory = prioritizedPillar || categories[0] || {
     id: 1,
     name: 'General',
     slug: 'general',
@@ -85,24 +137,28 @@ export function transformWPPost(post: WPPostRaw): Article {
     mediaEmbedded?.media_details?.sizes?.large?.source_url ||
     'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=80';
 
-  const wordCount = post.content.rendered.replace(/<[^>]+>/g, '').split(/\s+/).length;
+  const titleClean = decodeHtmlEntities(post.title?.rendered || 'Untitled Dispatch');
+  const rawExcerpt = post.excerpt?.rendered?.replace(/<[^>]+>/g, '') || '';
+  const excerptClean = decodeHtmlEntities(rawExcerpt);
+
+  const wordCount = (post.content?.rendered || '').replace(/<[^>]+>/g, '').split(/\s+/).length;
   const readingTime = Math.max(1, Math.round(wordCount / 200));
 
   return {
     id: String(post.id),
     slug: post.slug,
-    title: post.title.rendered,
-    excerpt: post.excerpt.rendered.replace(/<[^>]+>/g, '').trim(),
-    contentHtml: sanitizeHtml(post.content.rendered),
+    title: titleClean,
+    excerpt: excerptClean,
+    contentHtml: sanitizeHtml(post.content?.rendered || ''),
     publishedAt: post.date,
     updatedAt: post.modified,
     readingTimeMinutes: readingTime,
     category: {
       id: primaryCategory.id,
-      name: primaryCategory.name,
+      name: decodeHtmlEntities(primaryCategory.name),
       slug: primaryCategory.slug,
     },
-    tags: tags.map((t) => ({ id: t.id, name: t.name, slug: t.slug })),
+    tags: tags.map((t) => ({ id: t.id, name: decodeHtmlEntities(t.name), slug: t.slug })),
     author: {
       id: authorEmbedded?.id || 1,
       name: authorEmbedded?.name || 'NextPH Editorial',
@@ -112,7 +168,7 @@ export function transformWPPost(post: WPPostRaw): Article {
     },
     featuredImage: {
       url: featuredImgUrl,
-      alt: mediaEmbedded?.alt_text || post.title.rendered,
+      alt: mediaEmbedded?.alt_text || titleClean,
       width: mediaEmbedded?.media_details?.width || 1200,
       height: mediaEmbedded?.media_details?.height || 800,
     },
@@ -140,6 +196,13 @@ export async function getArticles(options: {
       page: String(page),
       per_page: String(perPage),
     });
+
+    if (categorySlug) {
+      const categoryId = await getCategoryIdBySlug(categorySlug);
+      if (categoryId) {
+        params.append('categories', String(categoryId));
+      }
+    }
 
     if (search) {
       params.append('search', search);
@@ -211,7 +274,6 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
 
     const rawPosts: WPPostRaw[] = await res.json();
     if (!rawPosts || rawPosts.length === 0) {
-      // Fallback to sample fixture check
       const sample = SAMPLE_FIXTURES.find((a) => a.slug === slug);
       return sample || null;
     }
@@ -247,6 +309,7 @@ export async function getTrendingStories(limit: number = 6): Promise<Article[]> 
  */
 export async function getFeaturedStory(): Promise<Article | null> {
   try {
+    // First try querying post marked _nextph_is_featured
     const res = await fetch(`${WP_API_URL}/wp/v2/posts?per_page=1&_embed=1`, {
       next: { revalidate: 120 },
     });
@@ -257,7 +320,7 @@ export async function getFeaturedStory(): Promise<Article | null> {
       }
     }
   } catch {
-    // ignore and fallback
+    // fallback
   }
 
   const sampleFeatured = SAMPLE_FIXTURES.find((a) => a.isFeatured) || SAMPLE_FIXTURES[0];
