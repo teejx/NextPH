@@ -143,11 +143,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   VIDEO
                 </span>
               )}
-              {!Boolean(currentStory.videoEmbedUrl || isVideoMedia(currentStory.featuredImage.url)) && isGifImage(currentStory.featuredImage.url) && (
-                <span className="rounded-full bg-white/20 backdrop-blur-xs px-2 py-0.5 text-[9px] font-black uppercase tracking-wider text-white drop-shadow-md">
-                  GIF
-                </span>
-              )}
             </div>
             <h1 className="mt-4 font-sans text-3xl sm:text-4xl lg:text-5xl font-black leading-tight tracking-tight text-white group-hover:text-zinc-200 transition-colors drop-shadow-[0_4px_12px_rgba(0,0,0,0.95)] drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
               <Link href={`/story/${currentStory.slug}`}>
@@ -243,11 +238,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               {Boolean(story.videoEmbedUrl || isVideoMedia(story.featuredImage.url)) && (
                 <span className="absolute top-2 right-2 z-10 rounded-full bg-zinc-950/85 backdrop-blur-xs px-2 py-0.5 text-[8px] font-black uppercase tracking-wider text-white">
                   VIDEO
-                </span>
-              )}
-              {!Boolean(story.videoEmbedUrl || isVideoMedia(story.featuredImage.url)) && isGifImage(story.featuredImage.url) && (
-                <span className="absolute top-2 right-2 z-10 rounded-full bg-zinc-950/85 backdrop-blur-xs px-2 py-0.5 text-[8px] font-black uppercase tracking-wider text-white">
-                  GIF
                 </span>
               )}
             </Link>

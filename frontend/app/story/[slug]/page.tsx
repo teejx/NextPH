@@ -10,7 +10,7 @@ import { VideoEmbed } from '../../../components/VideoEmbed';
 import { StoryCard } from '../../../components/StoryCard';
 import { NewsletterSection } from '../../../components/NewsletterSection';
 import { AdSlot } from '../../../components/AdSlot';
-import { isGifImage, isVideoMedia } from '../../../lib/media';
+import { isGifImage } from '../../../lib/media';
 
 interface StoryPageProps {
   params: Promise<{
@@ -161,48 +161,6 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
         {/* Top Ad Slot (disabled by default) */}
         <AdSlot placement="leaderboard" />
 
-        {/* Hero Featured Media - Render only if landscape/horizontal (if portrait, treated strictly as card thumbnail) */}
-        {(() => {
-          const isVideo = isVideoMedia(article.featuredImage.url);
-          const isGif = isGifImage(article.featuredImage.url);
-          const isPortrait =
-            article.featuredImage.width && article.featuredImage.height
-              ? article.featuredImage.height > article.featuredImage.width * 1.05
-              : false;
-
-          // If portrait photo, omit from story page per user instruction (treated strictly as card/feed thumbnail)
-          if (isPortrait && !isVideo) {
-            return null;
-          }
-
-          return (
-            <figure className="my-8 w-full max-w-7xl">
-              <div className="relative overflow-hidden rounded-xs border border-zinc-200 bg-zinc-950 w-full aspect-16/10 sm:aspect-16/9 lg:aspect-21/10 shadow-sm">
-                {isVideo ? (
-                  <video
-                    controls
-                    playsInline
-                    preload="metadata"
-                    className="h-full w-full object-cover"
-                  >
-                    <source src={article.featuredImage.url} />
-                    Your browser does not support the video tag.
-                  </video>
-                ) : (
-                  <Image
-                    src={article.featuredImage.url}
-                    alt={article.featuredImage.alt || article.title}
-                    fill
-                    priority
-                    unoptimized={isGif}
-                    sizes="100vw"
-                    className="object-cover"
-                  />
-                )}
-              </div>
-            </figure>
-          );
-        })()}
 
         {/* Video Embed (if present and distinct from featured media) */}
         {article.videoEmbedUrl && article.videoEmbedUrl !== article.featuredImage.url && (
