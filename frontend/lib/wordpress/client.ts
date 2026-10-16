@@ -209,7 +209,9 @@ export function transformWPPost(post: WPPostRaw): Article {
 
   const titleClean = decodeHtmlEntities(post.title?.rendered || 'Untitled Dispatch');
   const rawExcerpt = post.excerpt?.rendered?.replace(/<[^>]+>/g, '') || '';
-  const excerptClean = decodeHtmlEntities(rawExcerpt);
+  const excerptClean = decodeHtmlEntities(rawExcerpt)
+    .replace(/\[(&hellip;|&#8230;|…|\.{3})\]/g, '…')
+    .trim();
 
   const wordCount = (post.content?.rendered || '').replace(/<[^>]+>/g, '').split(/\s+/).length;
   const readingTime = Math.max(1, Math.round(wordCount / 200));
