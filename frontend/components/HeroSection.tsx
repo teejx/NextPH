@@ -61,7 +61,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
     <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch pt-6 pb-10">
       {/* Primary Featured Story Card (Dark Obsidian Carousel Container) */}
       <div
-        className="lg:col-span-8 group relative overflow-hidden rounded-xs bg-[#111113] text-white min-h-[440px] sm:min-h-[480px] flex flex-col justify-between"
+        className="lg:col-span-8 group relative overflow-hidden rounded-xs bg-[#111113] text-white min-h-[460px] sm:min-h-[500px] flex flex-col justify-between"
         role="region"
         aria-roledescription="carousel"
         aria-label="Featured Stories Carousel"
@@ -71,8 +71,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         onFocus={() => setIsPaused(true)}
         onBlur={() => setIsPaused(false)}
       >
-        {/* Right-side Images Stack: cross-fades smoothly between carousel items */}
-        <div className="absolute right-0 top-0 bottom-0 w-full md:w-[58%] lg:w-[60%] h-full overflow-hidden">
+        {/* Full-bleed Images Stack: ambient fill + unzoomed complete foreground image + directional fade */}
+        <div className="absolute inset-0 w-full h-full overflow-hidden">
           {stories.map((story, idx) => (
             <Link
               key={`hero-img-${story.id}-${idx}`}
@@ -83,91 +83,114 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 idx === currentIndex ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none z-0'
               }`}
             >
-              <Image
-                src={story.featuredImage.url}
-                alt={story.featuredImage.alt || story.title}
-                fill
-                priority={idx === 0}
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-103"
-              />
+              {/* Ambient blurred backdrop: eats the whole space with color/atmosphere */}
+              <div className="absolute inset-0 w-full h-full overflow-hidden">
+                <Image
+                  src={story.featuredImage.url}
+                  alt=""
+                  fill
+                  priority={idx === 0}
+                  sizes="(max-width: 1024px) 100vw, 66vw"
+                  className="object-cover object-center opacity-25 blur-xl pointer-events-none scale-105"
+                  aria-hidden="true"
+                />
+              </div>
+
+              {/* Crisp main foreground image: unzoomed (never cropped/scaled), shows whole image on right */}
+              <div className="absolute inset-0 w-full h-full flex justify-end items-center">
+                <div className="relative w-full md:w-[68%] lg:w-[65%] h-full">
+                  <Image
+                    src={story.featuredImage.url}
+                    alt={story.featuredImage.alt || story.title}
+                    fill
+                    priority={idx === 0}
+                    sizes="(max-width: 768px) 100vw, 55vw"
+                    className="object-contain object-right pointer-events-none"
+                  />
+                </div>
+              </div>
+
               {/* Smooth directional fade into solid black on the left side */}
-              <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-[#111113] via-[#111113]/70 via-30% to-transparent pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-[#111113] via-[#111113]/85 via-45% to-transparent pointer-events-none z-10" />
             </Link>
           ))}
         </div>
 
-        {/* Left-side Text Content Column */}
-        <div className="relative z-20 flex flex-col justify-between p-8 sm:p-10 lg:p-12 w-full md:w-[60%] lg:w-[55%] min-h-[440px] sm:min-h-[480px] pointer-events-none">
+        {/* Left-side Text Content Column with text drop shadows */}
+        <div className="relative z-20 flex flex-col justify-between p-8 sm:p-10 lg:p-12 w-full md:w-[65%] lg:w-[60%] min-h-[460px] sm:min-h-[500px] pointer-events-none pb-16 sm:pb-20">
           <div className="pointer-events-auto transition-opacity duration-500 ease-out">
-            <span className="text-[11px] font-bold uppercase tracking-widest text-zinc-400">
+            <span className="text-[11px] font-bold uppercase tracking-widest text-zinc-300 drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
               {currentStory.category.name}
             </span>
-            <h1 className="mt-4 font-sans text-3xl sm:text-4xl lg:text-5xl font-black leading-tight tracking-tight text-white group-hover:text-zinc-200 transition-colors">
+            <h1 className="mt-4 font-sans text-3xl sm:text-4xl lg:text-5xl font-black leading-tight tracking-tight text-white group-hover:text-zinc-200 transition-colors drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
               <Link href={`/story/${currentStory.slug}`}>
                 {currentStory.title}
               </Link>
             </h1>
-            <p className="mt-4 text-sm sm:text-base text-zinc-300 leading-relaxed line-clamp-3 max-w-md">
+            <p className="mt-4 text-sm sm:text-base text-zinc-200 leading-relaxed line-clamp-3 max-w-md drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)]">
               {currentStory.excerpt}
             </p>
           </div>
 
-          {/* Bottom Bar: Read More CTA + Interactive Carousel Controls */}
-          <div className="mt-8 flex items-center justify-between gap-4 pointer-events-auto">
+          {/* Bottom-left: Read More CTA */}
+          <div className="mt-8 pointer-events-auto">
             <Link
               href={`/story/${currentStory.slug}`}
-              className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white transition-transform hover:translate-x-1"
+              className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white transition-transform hover:translate-x-1 drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]"
             >
               <span>Read More</span>
               <ArrowRight className="h-3.5 w-3.5" />
             </Link>
-
-            {/* Carousel navigation: Chevrons + Pill Dots */}
-            {totalStories > 1 && (
-              <div className="flex items-center gap-2" role="group" aria-label="Slide controls">
-                <button
-                  type="button"
-                  onClick={handlePrev}
-                  aria-label="Previous story"
-                  className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white/80 hover:text-white transition-colors"
-                >
-                  <ChevronLeft className="h-3.5 w-3.5" />
-                </button>
-
-                <div className="flex items-center gap-1.5" role="tablist" aria-label="Stories">
-                  {stories.map((story, idx) => {
-                    const isActive = idx === currentIndex;
-                    return (
-                      <button
-                        key={`hero-dot-${story.id}-${idx}`}
-                        type="button"
-                        role="tab"
-                        aria-selected={isActive}
-                        aria-label={`Slide ${idx + 1}: ${story.title}`}
-                        onClick={() => setCurrentIndex(idx)}
-                        className={`transition-all duration-300 cursor-pointer ${
-                          isActive
-                            ? 'h-2 w-6 rounded-full bg-white shadow-xs'
-                            : 'h-2 w-2 rounded-full bg-zinc-600 hover:bg-zinc-400'
-                        }`}
-                      />
-                    );
-                  })}
-                </div>
-
-                <button
-                  type="button"
-                  onClick={handleNext}
-                  aria-label="Next story"
-                  className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white/80 hover:text-white transition-colors"
-                >
-                  <ChevronRight className="h-3.5 w-3.5" />
-                </button>
-              </div>
-            )}
           </div>
         </div>
+
+        {/* Middle Bottom Pagination Controls */}
+        {totalStories > 1 && (
+          <div
+            className="absolute bottom-5 sm:bottom-6 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2.5 pointer-events-auto"
+            role="group"
+            aria-label="Slide controls"
+          >
+            <button
+              type="button"
+              onClick={handlePrev}
+              aria-label="Previous story"
+              className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-black/60 hover:bg-black/90 text-white/90 hover:text-white border border-white/10 transition-colors cursor-pointer"
+            >
+              <ChevronLeft className="h-3.5 w-3.5" />
+            </button>
+
+            <div className="flex items-center gap-1.5" role="tablist" aria-label="Stories">
+              {stories.map((story, idx) => {
+                const isActive = idx === currentIndex;
+                return (
+                  <button
+                    key={`hero-dot-${story.id}-${idx}`}
+                    type="button"
+                    role="tab"
+                    aria-selected={isActive}
+                    aria-label={`Slide ${idx + 1}: ${story.title}`}
+                    onClick={() => setCurrentIndex(idx)}
+                    className={`transition-all duration-300 cursor-pointer ${
+                      isActive
+                        ? 'h-2 w-7 rounded-full bg-white shadow-md'
+                        : 'h-2 w-2 rounded-full bg-white/40 hover:bg-white/70'
+                    }`}
+                  />
+                );
+              })}
+            </div>
+
+            <button
+              type="button"
+              onClick={handleNext}
+              aria-label="Next story"
+              className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-black/60 hover:bg-black/90 text-white/90 hover:text-white border border-white/10 transition-colors cursor-pointer"
+            >
+              <ChevronRight className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Right Sidebar: 3 Stacked Stories */}

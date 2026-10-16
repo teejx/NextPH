@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { Calendar, Clock, RefreshCw, ChevronRight } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { getArticleBySlug, getArticles } from '../../../lib/wordpress/client';
 import { ShareButtons } from '../../../components/ShareButtons';
 import { VideoEmbed } from '../../../components/VideoEmbed';
@@ -79,18 +79,6 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
   });
   const filteredRelated = relatedStories.filter((a) => a.slug !== article.slug).slice(0, 3);
 
-  const formattedPublishDate = new Date(article.publishedAt).toLocaleDateString('en-PH', {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-  });
-
-  const formattedUpdateDate = new Date(article.updatedAt).toLocaleDateString('en-PH', {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-  });
-
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
   const storyUrl = `${siteUrl}/story/${article.slug}`;
 
@@ -131,7 +119,7 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <article className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
+      <article className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
         {/* Breadcrumb Navigation */}
         <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-zinc-400">
           <Link href="/" className="hover:text-zinc-950 transition-colors">
@@ -142,11 +130,11 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
             {article.category.name}
           </Link>
           <ChevronRight className="h-3 w-3 text-zinc-300" />
-          <span className="text-zinc-700 truncate max-w-xs">{article.title}</span>
+          <span className="text-zinc-700 truncate max-w-md">{article.title}</span>
         </nav>
 
         {/* Story Header */}
-        <header className="mt-6 border-b border-zinc-200 pb-8">
+        <header className="mt-6 border-b border-zinc-200 pb-8 max-w-5xl">
           <Link
             href={`/${article.category.slug}`}
             className="inline-block text-[11px] font-bold uppercase tracking-widest text-zinc-500 hover:text-black transition-colors"
@@ -163,46 +151,6 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
               {article.excerpt}
             </p>
           )}
-
-          {/* Author & Timestamps Metadata Bar */}
-          <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-zinc-200 pt-4 text-xs text-zinc-500">
-            <div className="flex items-center gap-3">
-              {article.author.avatarUrl && (
-                <div className="relative h-10 w-10 overflow-hidden rounded-full bg-zinc-100">
-                  <Image
-                    src={article.author.avatarUrl}
-                    alt={article.author.name}
-                    fill
-                    sizes="40px"
-                    className="object-cover"
-                  />
-                </div>
-              )}
-              <div>
-                <span className="block font-bold text-zinc-950">{article.author.name}</span>
-                <span className="text-[10px] uppercase tracking-wider text-zinc-400">WHAT&apos;S NEXT PH Editorial</span>
-              </div>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-4 text-zinc-500">
-              <div className="flex items-center gap-1.5" title="Published date">
-                <Calendar className="h-3.5 w-3.5 text-zinc-400" />
-                <span>{formattedPublishDate}</span>
-              </div>
-
-              {article.updatedAt !== article.publishedAt && (
-                <div className="flex items-center gap-1.5 text-zinc-500" title="Last updated date">
-                  <RefreshCw className="h-3 w-3 text-zinc-400" />
-                  <span>Updated {formattedUpdateDate}</span>
-                </div>
-              )}
-
-              <div className="flex items-center gap-1.5" title="Estimated reading time">
-                <Clock className="h-3.5 w-3.5 text-zinc-400" />
-                <span>{article.readingTimeMinutes} min read</span>
-              </div>
-            </div>
-          </div>
         </header>
 
         {/* Top Ad Slot (disabled by default) */}
@@ -216,11 +164,11 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
               : false;
 
           return (
-            <figure className={`my-8 ${isPortrait ? 'flex flex-col items-center' : ''}`}>
+            <figure className={`my-8 ${isPortrait ? 'flex flex-col items-center' : 'w-full max-w-6xl'}`}>
               <div
                 className={`relative overflow-hidden rounded-xs border border-zinc-200 bg-zinc-100 ${
                   isPortrait
-                    ? 'w-full max-w-md aspect-3/4 sm:aspect-2/3 shadow-xl ring-1 ring-zinc-900/5'
+                    ? 'w-full max-w-lg aspect-3/4 sm:aspect-2/3 shadow-xl ring-1 ring-zinc-900/5'
                     : 'w-full aspect-16/10 sm:aspect-16/9 shadow-xs'
                 }`}
               >
@@ -229,7 +177,7 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
                   alt={article.featuredImage.alt || article.title}
                   fill
                   priority
-                  sizes={isPortrait ? '(max-width: 768px) 100vw, 448px' : '(max-width: 1024px) 100vw, 896px'}
+                  sizes={isPortrait ? '(max-width: 768px) 100vw, 512px' : '(max-width: 1280px) 100vw, 1200px'}
                   className={`${isPortrait ? 'object-cover' : 'object-contain sm:object-cover'}`}
                 />
               </div>

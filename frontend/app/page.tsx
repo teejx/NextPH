@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
-import { getArticles, getFeaturedStories, getTrendingStories } from '../lib/wordpress/client';
+import { getArticles, getFeaturedStories, getTrendingStories, getTags } from '../lib/wordpress/client';
 import { HeroSection } from '../components/HeroSection';
 import { CategoryStrip } from '../components/CategoryStrip';
 import { LatestGridSection } from '../components/LatestGridSection';
@@ -12,7 +12,7 @@ import { Article } from '../lib/wordpress/types';
 export const revalidate = 120; // 2-minute ISR
 
 export default async function HomePage() {
-  const [featuredStories, trendingStories, newsFeed, techFeed, travelFeed, lifestyleFeed, latestFeed] =
+  const [featuredStories, trendingStories, newsFeed, techFeed, travelFeed, lifestyleFeed, latestFeed, popularTags] =
     await Promise.all([
       getFeaturedStories(4),
       getTrendingStories(6),
@@ -21,6 +21,7 @@ export default async function HomePage() {
       getArticles({ categorySlug: 'travel', perPage: 4 }),
       getArticles({ categorySlug: 'lifestyle', perPage: 4 }),
       getArticles({ perPage: 12 }),
+      getTags(12),
     ]);
 
   const leadStory = featuredStories[0] || latestFeed.articles[0];
@@ -70,7 +71,9 @@ export default async function HomePage() {
     .slice(0, 4);
 
   // Curated dispatches: strictly de-duplicated by ID to prevent any duplicate key errors
+  // Prioritizes stories marked as curated trending, then pillar category stories
   const rawCurated = [
+    ...trendingStories.filter((a) => !heroCarouselIds.has(a.id) && a.id !== spotlightStory.id),
     ...newsFeed.articles.filter((a) => a.id !== spotlightStory.id),
     ...techFeed.articles.filter((a) => a.id !== spotlightStory.id),
     ...travelFeed.articles.filter((a) => a.id !== spotlightStory.id),
@@ -150,13 +153,13 @@ export default async function HomePage() {
           Explore Trending Topics
         </span>
         <div className="mt-4 flex flex-wrap justify-center gap-2">
-          {['fintech', 'batanes', 'ecotourism', 'culinary', 'space-science', 'coffee', 'palawan', 'digital-economy'].map((tag) => (
+          {popularTags.map((tag) => (
             <Link
-              key={tag}
-              href={`/tag/${tag}`}
+              key={tag.slug}
+              href={`/tag/${tag.slug}`}
               className="rounded-full border border-zinc-200 px-3.5 py-1 text-xs font-bold text-zinc-900 transition-colors hover:border-zinc-950 hover:bg-zinc-950 hover:text-white"
             >
-              #{tag}
+              #{tag.name}
             </Link>
           ))}
         </div>

@@ -177,7 +177,7 @@ export const Header: React.FC = () => {
           {searchOpen ? (
             /* Search Line & Live Dropdown Container */
             <div ref={searchContainerRef} className="relative flex items-center">
-              <div className="flex items-center w-60 sm:w-80 md:w-96 border-b-2 border-zinc-950 pb-1.5 transition-all">
+              <div className="flex items-center w-60 sm:w-80 md:w-96 border-b border-zinc-900 pb-1.5 transition-all">
                 <Search className="h-4 w-4 text-zinc-950 mr-2 shrink-0" />
                 <input
                   ref={searchInputRef}
@@ -186,7 +186,9 @@ export const Header: React.FC = () => {
                   onChange={(e) => handleSearchChange(e.target.value)}
                   onKeyDown={handleKeyDown}
                   placeholder="Search posts or categories..."
-                  className="w-full bg-transparent text-xs sm:text-sm font-medium text-zinc-950 placeholder-zinc-400 focus:outline-hidden"
+                  autoComplete="off"
+                  spellCheck={false}
+                  className="w-full bg-transparent text-xs sm:text-sm font-medium text-zinc-950 placeholder-zinc-400 border-0 outline-none focus:outline-none focus:ring-0 ring-0 shadow-none"
                   aria-label="Search posts or categories"
                 />
                 {isSearching ? (
@@ -199,7 +201,7 @@ export const Header: React.FC = () => {
                       setSearchResults([]);
                       searchInputRef.current?.focus();
                     }}
-                    className="text-zinc-400 hover:text-zinc-950 mr-1 p-0.5"
+                    className="text-zinc-400 hover:text-zinc-950 mr-1 p-0.5 outline-none focus:outline-none cursor-pointer"
                     aria-label="Clear query"
                   >
                     <X className="h-3.5 w-3.5" />
@@ -210,7 +212,7 @@ export const Header: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setSearchOpen(false)}
-                className="ml-2.5 text-zinc-500 hover:text-zinc-950 text-xs font-bold uppercase tracking-wider p-1"
+                className="ml-2.5 text-zinc-500 hover:text-zinc-950 text-xs font-bold uppercase tracking-wider p-1 outline-none focus:outline-none cursor-pointer"
                 aria-label="Close search"
               >
                 Close
@@ -315,7 +317,7 @@ export const Header: React.FC = () => {
             <button
               type="button"
               onClick={() => setSearchOpen(true)}
-              className="rounded-full p-2 text-zinc-800 transition-colors hover:bg-zinc-100 hover:text-black focus-visible:outline-2 focus-visible:outline-black cursor-pointer"
+              className="rounded-full p-2 text-zinc-800 transition-colors hover:bg-zinc-100 hover:text-black outline-none focus:outline-none focus-visible:ring-1 focus-visible:ring-zinc-400 cursor-pointer"
               aria-label="Open search line"
             >
               <Search className="h-5 w-5" />

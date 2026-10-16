@@ -387,3 +387,34 @@ export async function getFeaturedStory(): Promise<Article | null> {
   const stories = await getFeaturedStories(1);
   return stories[0] || null;
 }
+
+/**
+ * Fetch dynamic tags from WordPress for the trending topics strip.
+ */
+export async function getTags(limit: number = 10): Promise<WPTag[]> {
+  try {
+    const res = await fetchWP(`/wp/v2/tags?per_page=${limit}&orderby=count&order=desc`, {
+      next: { revalidate: 300 },
+    });
+    if (res.ok) {
+      const tags: WPTag[] = await res.json();
+      if (tags && tags.length > 0) {
+        return tags;
+      }
+    }
+  } catch {
+    // fallback
+  }
+
+  // Fallback default topics if no WordPress tags exist yet
+  return [
+    { id: 1, name: 'Fintech', slug: 'fintech', count: 5, description: '', link: '', taxonomy: 'post_tag' },
+    { id: 2, name: 'Batanes', slug: 'batanes', count: 4, description: '', link: '', taxonomy: 'post_tag' },
+    { id: 3, name: 'Ecotourism', slug: 'ecotourism', count: 4, description: '', link: '', taxonomy: 'post_tag' },
+    { id: 4, name: 'Culinary', slug: 'culinary', count: 3, description: '', link: '', taxonomy: 'post_tag' },
+    { id: 5, name: 'Space Science', slug: 'space-science', count: 3, description: '', link: '', taxonomy: 'post_tag' },
+    { id: 6, name: 'Coffee', slug: 'coffee', count: 2, description: '', link: '', taxonomy: 'post_tag' },
+    { id: 7, name: 'Palawan', slug: 'palawan', count: 2, description: '', link: '', taxonomy: 'post_tag' },
+    { id: 8, name: 'Digital Economy', slug: 'digital-economy', count: 2, description: '', link: '', taxonomy: 'post_tag' },
+  ].slice(0, limit);
+}
