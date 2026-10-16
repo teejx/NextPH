@@ -22,7 +22,7 @@ export const VideoEmbed: React.FC<VideoEmbedProps> = ({
   const isDirectVideo = isVideoMedia(safeUrl);
 
   return (
-    <figure className={`my-8 overflow-hidden rounded-xs border border-zinc-200 bg-zinc-950 shadow-sm ${className}`}>
+    <figure className={`my-8 overflow-hidden rounded-xs border border-zinc-200 dark:border-zinc-800 bg-zinc-950 shadow-sm ${className}`}>
       <div className="relative aspect-video w-full bg-black flex items-center justify-center">
         {isDirectVideo ? (
           <video
@@ -46,7 +46,7 @@ export const VideoEmbed: React.FC<VideoEmbedProps> = ({
           />
         )}
       </div>
-      <figcaption className="bg-zinc-50 border-t border-zinc-200 px-4 py-2.5 text-center text-xs text-zinc-500 font-medium">
+      <figcaption className="bg-zinc-50 dark:bg-zinc-900 border-t border-zinc-200 dark:border-zinc-800 px-4 py-2.5 text-center text-xs text-zinc-500 dark:text-zinc-400 font-medium">
         {title}
       </figcaption>
     </figure>

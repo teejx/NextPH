@@ -45,19 +45,19 @@ export const ShareButtons: React.FC<ShareButtonsProps> = ({ title, url, variant 
   if (variant === 'vertical') {
     return (
       <div className="flex flex-col items-center gap-3" aria-label="Social sharing options">
-        <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-400 mb-1">
+        <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500 mb-1">
           Share
         </span>
 
         {/* Copy Link Button */}
         <button
           onClick={handleCopyLink}
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-zinc-200 bg-white text-zinc-700 transition-colors hover:border-zinc-950 hover:bg-zinc-950 hover:text-white cursor-pointer"
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 transition-colors hover:border-zinc-950 dark:hover:border-zinc-300 hover:bg-zinc-950 dark:hover:bg-zinc-100 hover:text-white dark:hover:text-zinc-950 cursor-pointer"
           title={copied ? 'Link copied!' : 'Copy article link'}
           aria-label={copied ? 'Story link copied to clipboard' : 'Copy link to story'}
         >
           {copied ? (
-            <Check className="h-4 w-4 text-emerald-600" />
+            <Check className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
           ) : (
             <LinkIcon className="h-4 w-4" />
           )}
@@ -68,7 +68,7 @@ export const ShareButtons: React.FC<ShareButtonsProps> = ({ title, url, variant 
           href={`https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-zinc-200 bg-white text-zinc-700 text-xs font-bold transition-colors hover:border-zinc-950 hover:bg-zinc-950 hover:text-white"
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 text-xs font-bold transition-colors hover:border-zinc-950 dark:hover:border-zinc-300 hover:bg-zinc-950 dark:hover:bg-zinc-100 hover:text-white dark:hover:text-zinc-950"
           aria-label="Share on X (formerly Twitter)"
           title="Share on X (formerly Twitter)"
         >
@@ -80,7 +80,7 @@ export const ShareButtons: React.FC<ShareButtonsProps> = ({ title, url, variant 
           href={`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-zinc-200 bg-white text-zinc-700 text-xs font-bold transition-colors hover:border-zinc-950 hover:bg-zinc-950 hover:text-white"
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 text-xs font-bold transition-colors hover:border-zinc-950 dark:hover:border-zinc-300 hover:bg-zinc-950 dark:hover:bg-zinc-100 hover:text-white dark:hover:text-zinc-950"
           aria-label="Share on Facebook"
           title="Share on Facebook"
         >
@@ -92,7 +92,7 @@ export const ShareButtons: React.FC<ShareButtonsProps> = ({ title, url, variant 
           href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-zinc-200 bg-white text-zinc-700 text-xs font-bold transition-colors hover:border-zinc-950 hover:bg-zinc-950 hover:text-white"
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 text-xs font-bold transition-colors hover:border-zinc-950 dark:hover:border-zinc-300 hover:bg-zinc-950 dark:hover:bg-zinc-100 hover:text-white dark:hover:text-zinc-950"
           aria-label="Share on LinkedIn"
           title="Share on LinkedIn"
         >
@@ -102,7 +102,7 @@ export const ShareButtons: React.FC<ShareButtonsProps> = ({ title, url, variant 
         {/* Native Share */}
         <button
           onClick={handleNativeShare}
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-zinc-200 bg-white text-zinc-700 transition-colors hover:border-zinc-950 hover:bg-zinc-950 hover:text-white cursor-pointer"
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 transition-colors hover:border-zinc-950 dark:hover:border-zinc-300 hover:bg-zinc-950 dark:hover:bg-zinc-100 hover:text-white dark:hover:text-zinc-950 cursor-pointer"
           title="Share options"
           aria-label="Share via system menu"
         >
@@ -115,24 +115,24 @@ export const ShareButtons: React.FC<ShareButtonsProps> = ({ title, url, variant 
   // Standard Horizontal Variant
   return (
     <div className="flex flex-wrap items-center gap-2.5 py-4" aria-label="Social sharing options">
-      <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 mr-2">
+      <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 mr-2">
         Share Dispatch:
       </span>
 
       {/* Copy Link Button */}
       <button
         onClick={handleCopyLink}
-        className="inline-flex items-center gap-1.5 rounded-full border border-zinc-200 bg-white px-3.5 py-1.5 text-xs font-bold text-zinc-800 transition-colors hover:border-zinc-950 hover:bg-zinc-950 hover:text-white cursor-pointer"
+        className="inline-flex items-center gap-1.5 rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3.5 py-1.5 text-xs font-bold text-zinc-800 dark:text-zinc-200 transition-colors hover:border-zinc-950 dark:hover:border-zinc-300 hover:bg-zinc-950 dark:hover:bg-zinc-100 hover:text-white dark:hover:text-zinc-950 cursor-pointer"
         aria-label={copied ? 'Story link copied to clipboard' : 'Copy link to story'}
       >
         {copied ? (
           <>
-            <Check className="h-3.5 w-3.5 text-emerald-600" />
-            <span className="text-emerald-700 font-bold">Link Copied!</span>
+            <Check className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+            <span className="text-emerald-700 dark:text-emerald-400 font-bold">Link Copied!</span>
           </>
         ) : (
           <>
-            <LinkIcon className="h-3.5 w-3.5 text-zinc-500" />
+            <LinkIcon className="h-3.5 w-3.5 text-zinc-500 dark:text-zinc-400" />
             <span>Copy Link</span>
           </>
         )}
@@ -141,11 +141,11 @@ export const ShareButtons: React.FC<ShareButtonsProps> = ({ title, url, variant 
       {/* Native Web Share Button */}
       <button
         onClick={handleNativeShare}
-        className="inline-flex items-center gap-1.5 rounded-full border border-zinc-200 bg-white px-3.5 py-1.5 text-xs font-bold text-zinc-800 transition-colors hover:border-zinc-950 hover:bg-zinc-950 hover:text-white cursor-pointer"
+        className="inline-flex items-center gap-1.5 rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3.5 py-1.5 text-xs font-bold text-zinc-800 dark:text-zinc-200 transition-colors hover:border-zinc-950 dark:hover:border-zinc-300 hover:bg-zinc-950 dark:hover:bg-zinc-100 hover:text-white dark:hover:text-zinc-950 cursor-pointer"
         title="Share via device options"
         aria-label="Share story via system menu"
       >
-        <Share2 className="h-3.5 w-3.5 text-zinc-500" />
+        <Share2 className="h-3.5 w-3.5 text-zinc-500 dark:text-zinc-400" />
         <span>Share</span>
       </button>
 
@@ -154,7 +154,7 @@ export const ShareButtons: React.FC<ShareButtonsProps> = ({ title, url, variant 
         href={`https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center rounded-full border border-zinc-200 bg-white px-3.5 py-1.5 text-xs font-bold text-zinc-800 hover:border-zinc-950 hover:bg-zinc-950 hover:text-white transition-colors"
+        className="inline-flex items-center rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3.5 py-1.5 text-xs font-bold text-zinc-800 dark:text-zinc-200 hover:border-zinc-950 dark:hover:border-zinc-300 hover:bg-zinc-950 dark:hover:bg-zinc-100 hover:text-white dark:hover:text-zinc-950 transition-colors"
         aria-label="Share on X (formerly Twitter)"
       >
         𝕏
@@ -163,7 +163,7 @@ export const ShareButtons: React.FC<ShareButtonsProps> = ({ title, url, variant 
         href={`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center rounded-full border border-zinc-200 bg-white px-3.5 py-1.5 text-xs font-bold text-zinc-800 hover:border-zinc-950 hover:bg-zinc-950 hover:text-white transition-colors"
+        className="inline-flex items-center rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3.5 py-1.5 text-xs font-bold text-zinc-800 dark:text-zinc-200 hover:border-zinc-950 dark:hover:border-zinc-300 hover:bg-zinc-950 dark:hover:bg-zinc-100 hover:text-white dark:hover:text-zinc-950 transition-colors"
         aria-label="Share on Facebook"
       >
         Facebook
@@ -172,7 +172,7 @@ export const ShareButtons: React.FC<ShareButtonsProps> = ({ title, url, variant 
         href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center rounded-full border border-zinc-200 bg-white px-3.5 py-1.5 text-xs font-bold text-zinc-800 hover:border-zinc-950 hover:bg-zinc-950 hover:text-white transition-colors"
+        className="inline-flex items-center rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3.5 py-1.5 text-xs font-bold text-zinc-800 dark:text-zinc-200 hover:border-zinc-950 dark:hover:border-zinc-300 hover:bg-zinc-950 dark:hover:bg-zinc-100 hover:text-white dark:hover:text-zinc-950 transition-colors"
         aria-label="Share on LinkedIn"
       >
         LinkedIn

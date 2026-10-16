@@ -17,18 +17,18 @@ export default function GlobalError({
 
   return (
     <html lang="en">
-      <body className="min-h-screen bg-white text-zinc-950 font-sans antialiased flex items-center justify-center p-6">
+      <body className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-950 dark:text-zinc-50 font-sans antialiased flex items-center justify-center p-6">
         <div className="mx-auto max-w-xl text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-zinc-50 px-3.5 py-1 text-xs font-bold uppercase tracking-widest text-zinc-600 mb-6">
-            <AlertTriangle className="h-3.5 w-3.5 text-zinc-900" />
+          <div className="inline-flex items-center gap-2 rounded-full border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-3.5 py-1 text-xs font-bold uppercase tracking-widest text-zinc-600 dark:text-zinc-400 mb-6">
+            <AlertTriangle className="h-3.5 w-3.5 text-zinc-900 dark:text-zinc-100" />
             <span>Critical Notice • Unexpected Disruption</span>
           </div>
 
-          <h1 className="font-sans text-4xl sm:text-5xl font-black tracking-tight text-zinc-950">
+          <h1 className="font-sans text-4xl sm:text-5xl font-black tracking-tight text-zinc-950 dark:text-zinc-50">
             Something Went Wrong
           </h1>
 
-          <p className="mt-4 text-base sm:text-lg text-zinc-600 max-w-md mx-auto leading-relaxed">
+          <p className="mt-4 text-base sm:text-lg text-zinc-600 dark:text-zinc-400 max-w-md mx-auto leading-relaxed">
             A critical system disruption occurred while rendering this page.
           </p>
 
@@ -36,14 +36,14 @@ export default function GlobalError({
             <button
               type="button"
               onClick={() => reset()}
-              className="inline-flex items-center gap-2 rounded-full bg-zinc-950 px-6 py-3 text-xs font-bold uppercase tracking-wider text-white transition-all hover:bg-zinc-800 shadow-sm cursor-pointer"
+              className="inline-flex items-center gap-2 rounded-full bg-zinc-950 dark:bg-zinc-100 px-6 py-3 text-xs font-bold uppercase tracking-wider text-white dark:text-zinc-950 transition-all hover:bg-zinc-800 dark:hover:bg-zinc-200 shadow-sm cursor-pointer"
             >
               <RefreshCw className="h-4 w-4" />
               <span>Try Again</span>
             </button>
             <Link
               href="/"
-              className="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white px-6 py-3 text-xs font-bold uppercase tracking-wider text-zinc-900 transition-all hover:border-zinc-950 hover:bg-zinc-50"
+              className="inline-flex items-center gap-2 rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-6 py-3 text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-100 transition-all hover:border-zinc-950 dark:hover:border-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-700"
             >
               Return to Homepage
             </Link>

@@ -5,6 +5,7 @@ import { AdSlot } from '../components/AdSlot';
 import { ShareButtons } from '../components/ShareButtons';
 import { HeroSection } from '../components/HeroSection';
 import { Article } from '../lib/wordpress/types';
+import { ArticleCardSkeleton, HeroSkeleton, ArticlePageSkeleton } from '../components/skeletons';
 
 describe('Frontend Component Guarantees', () => {
   const originalEnv = process.env;
@@ -107,6 +108,37 @@ describe('Frontend Component Guarantees', () => {
       fireEvent.click(nextButton);
 
       expect(screen.getByText('Story 2 Title')).toBeInTheDocument();
+    });
+  });
+
+  describe('Skeleton Components', () => {
+    it('ArticleCardSkeleton renders with aria-hidden="true" and animate-pulse', () => {
+      const { container } = render(<ArticleCardSkeleton />);
+      const article = container.querySelector('article');
+      expect(article).toHaveAttribute('aria-hidden', 'true');
+      expect(article?.className).toContain('animate-pulse');
+    });
+
+    it('ArticleCardSkeleton renders compact layout when compact=true', () => {
+      const { container } = render(<ArticleCardSkeleton compact />);
+      const article = container.querySelector('article');
+      expect(article).toHaveAttribute('aria-hidden', 'true');
+      expect(article?.className).toContain('animate-pulse');
+      expect(container.querySelector('.h-18.w-20')).toBeInTheDocument();
+    });
+
+    it('HeroSkeleton renders with aria-hidden="true" and animate-pulse', () => {
+      const { container } = render(<HeroSkeleton />);
+      const section = container.querySelector('section');
+      expect(section).toHaveAttribute('aria-hidden', 'true');
+      expect(section?.className).toContain('animate-pulse');
+    });
+
+    it('ArticlePageSkeleton renders with aria-hidden="true" and animate-pulse', () => {
+      const { container } = render(<ArticlePageSkeleton />);
+      const article = container.querySelector('article');
+      expect(article).toHaveAttribute('aria-hidden', 'true');
+      expect(article?.className).toContain('animate-pulse');
     });
   });
 });

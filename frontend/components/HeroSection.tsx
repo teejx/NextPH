@@ -62,7 +62,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
     <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-stretch pt-6 pb-10">
       {/* Primary Featured Story Card (16:9 1080p Widescreen Carousel Container) */}
       <div
-        className="lg:col-span-8 group relative overflow-hidden rounded-xs bg-[#111113] text-white w-full aspect-[16/10] sm:aspect-[16/9] min-h-[380px] sm:min-h-[440px] lg:min-h-[460px] flex flex-col justify-between shadow-md"
+        className="lg:col-span-8 group relative overflow-hidden rounded-xs bg-zinc-950 text-white w-full aspect-[16/10] sm:aspect-[16/9] min-h-[380px] sm:min-h-[440px] lg:min-h-[460px] flex flex-col justify-between shadow-md"
         role="region"
         aria-roledescription="carousel"
         aria-label="Featured Stories Carousel"
@@ -106,7 +106,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                         />
                       </div>
                     </div>
-                    <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-[#111113] via-[#111113]/85 via-45% to-transparent pointer-events-none z-10" />
+                    <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-zinc-950 via-zinc-950/85 via-45% to-transparent pointer-events-none z-10" />
                   </>
                 ) : (
                   /* 1080p / wide landscape photo: occupies the WHOLE feature area without fade, just text with shadows */
@@ -216,7 +216,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       </div>
 
       {/* Right Sidebar: 3 Stacked Stories - Moved to right side with bigger pictures */}
-      <div className="lg:col-span-4 flex flex-col justify-between divide-y divide-zinc-200 border-t border-b lg:border-t-0 lg:border-b-0 border-zinc-200 py-1 lg:py-0">
+      <div className="lg:col-span-4 flex flex-col justify-between divide-y divide-zinc-200 dark:divide-zinc-800 border-t border-b lg:border-t-0 lg:border-b-0 border-zinc-200 dark:border-zinc-800 py-1 lg:py-0">
         {sidebarStories.slice(0, 3).map((story, idx) => (
           <article
             key={`hero-sidebar-${story.id}-${idx}`}
@@ -225,7 +225,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             {/* Thumbnail: Rectangular & Bigger matching uploaded design */}
             <Link
               href={`/story/${story.slug}`}
-              className="relative w-36 sm:w-40 lg:w-44 h-24 sm:h-28 lg:h-30 shrink-0 overflow-hidden rounded-xs bg-zinc-100 shadow-2xs"
+              className="relative w-36 sm:w-40 lg:w-44 h-24 sm:h-28 lg:h-30 shrink-0 overflow-hidden rounded-xs bg-zinc-100 dark:bg-zinc-800 shadow-2xs"
             >
               <Image
                 src={story.featuredImage.url}
@@ -244,17 +244,17 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
             {/* Details */}
             <div className="flex flex-col justify-center grow min-w-0">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400">
                 {story.category.name}
               </span>
-              <h2 className="mt-1 font-sans text-sm sm:text-base font-bold leading-snug text-zinc-950 group-hover:text-zinc-600 transition-colors line-clamp-2">
+              <h2 className="mt-1 font-sans text-sm sm:text-base font-bold leading-snug text-zinc-950 dark:text-zinc-50 group-hover:text-zinc-600 dark:group-hover:text-zinc-300 transition-colors line-clamp-2">
                 <Link href={`/story/${story.slug}`}>
                   {story.title}
                 </Link>
               </h2>
               <Link
                 href={`/story/${story.slug}`}
-                className="mt-2.5 inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-zinc-900 hover:text-black"
+                className="mt-2.5 inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-100 hover:text-black dark:hover:text-white transition-colors"
               >
                 <span>Read More</span>
                 <ArrowRight className="h-3 w-3" />

@@ -44,7 +44,7 @@ export const CategoryStrip: React.FC = () => {
             <Link
               key={cat.name}
               href={`/${cat.slug}`}
-              className="group relative h-40 sm:h-48 md:h-52 overflow-hidden rounded-xs bg-zinc-950 flex flex-col items-center justify-center text-center p-4 shadow-sm"
+              className="group relative h-40 sm:h-48 md:h-52 overflow-hidden rounded-xs bg-zinc-950 dark:bg-zinc-900 border border-transparent dark:border-zinc-800 flex flex-col items-center justify-center text-center p-4 shadow-sm transition-colors hover:border-zinc-700"
             >
               {/* Background Photographic Image with Dark Vignette */}
               <Image

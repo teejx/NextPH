@@ -192,7 +192,7 @@ async function getCategoryIdBySlug(slug: string): Promise<number | null> {
 
   try {
     const res = await fetchWP(`/wp/v2/categories?slug=${encodeURIComponent(slug)}`, {
-      next: { revalidate: 3600 },
+      next: { revalidate: 1800, tags: ['categories'] },
     });
     if (res.ok) {
       const categories: WPCategory[] = await res.json();
@@ -217,7 +217,7 @@ async function getTagIdBySlug(slug: string): Promise<number | null> {
 
   try {
     const res = await fetchWP(`/wp/v2/tags?slug=${encodeURIComponent(slug)}`, {
-      next: { revalidate: 3600 },
+      next: { revalidate: 1800, tags: ['tags'] },
     });
     if (res.ok) {
       const tags: WPTag[] = await res.json();
@@ -386,7 +386,7 @@ export async function getArticles(options: {
     }
 
     const res = await fetchWP(`/wp/v2/posts?${params.toString()}`, {
-      next: { revalidate: 120 }, // 2-minute ISR
+      next: { revalidate: 300, tags: ['posts'] },
     });
 
     if (!res.ok) {
@@ -448,7 +448,7 @@ export async function getArticles(options: {
 export async function getArticleBySlug(slug: string): Promise<Article | null> {
   try {
     const res = await fetchWP(`/wp/v2/posts?slug=${encodeURIComponent(slug)}&_embed=1`, {
-      next: { revalidate: 120 },
+      next: { revalidate: 300, tags: ['posts', `post-${slug}`] },
     });
 
     if (!res.ok) {
@@ -474,7 +474,7 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
 export async function getTrendingStories(limit: number = 6): Promise<Article[]> {
   try {
     const res = await fetchWP(`/nextph/v1/trending?limit=${limit}&_embed=1`, {
-      next: { revalidate: 120 },
+      next: { revalidate: 300, tags: ['posts'] },
     });
 
     if (res.ok) {
@@ -493,7 +493,7 @@ export async function getTrendingStories(limit: number = 6): Promise<Article[]> 
 export async function getFeaturedStories(limit: number = 4): Promise<Article[]> {
   try {
     const res = await fetchWP(`/wp/v2/posts?per_page=${limit}&_embed=1`, {
-      next: { revalidate: 120 },
+      next: { revalidate: 300, tags: ['posts'] },
     });
     if (res.ok) {
       const rawPosts: WPPostRaw[] = await res.json();
@@ -537,7 +537,7 @@ export async function getTags(limit: number = 10): Promise<WPTag[]> {
 
   try {
     const res = await fetchWP(`/wp/v2/tags?per_page=${limit}&orderby=count&order=desc`, {
-      next: { revalidate: 300 },
+      next: { revalidate: 1800, tags: ['tags'] },
     });
     if (res.ok) {
       const tags: WPTag[] = await res.json();

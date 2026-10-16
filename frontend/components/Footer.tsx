@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="w-full border-t border-zinc-800 bg-[#0B0B0C] text-white">
+    <footer className="w-full border-t border-zinc-200 dark:border-zinc-800 bg-zinc-950 text-white">
       <div className="mx-auto max-w-7xl px-6 py-16 sm:px-8 lg:px-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
           {/* Brand & Mission Column */}

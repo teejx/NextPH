@@ -61,12 +61,12 @@ function SearchComponent() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
-      <header className="border-b border-zinc-200 pb-8 text-center max-w-2xl mx-auto">
-        <span className="text-[11px] font-bold uppercase tracking-widest text-zinc-400">Archive Search</span>
-        <h1 className="mt-2 font-sans text-3xl sm:text-4xl font-black tracking-tight text-zinc-950">
+      <header className="border-b border-zinc-200 dark:border-zinc-800 pb-8 text-center max-w-2xl mx-auto">
+        <span className="text-[11px] font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">Archive Search</span>
+        <h1 className="mt-2 font-sans text-3xl sm:text-4xl font-black tracking-tight text-zinc-950 dark:text-zinc-50">
           Search WHAT&apos;S NEXT PH Stories
         </h1>
-        <p className="mt-3 text-sm text-zinc-600">
+        <p className="mt-3 text-sm text-zinc-600 dark:text-zinc-400">
           Search our full catalog of Filipino technology, travel, lifestyle, and trending stories.
         </p>
 
@@ -81,13 +81,13 @@ function SearchComponent() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search by keywords, topic, or author (e.g. Batanes, Fintech)..."
-              className="w-full rounded-full border border-zinc-300 bg-white py-3.5 pl-12 pr-28 text-sm text-zinc-950 placeholder-zinc-400 shadow-xs focus:border-zinc-950 focus:ring-2 focus:ring-zinc-950 focus:outline-hidden"
+              className="w-full rounded-full border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 py-3.5 pl-12 pr-28 text-sm text-zinc-950 dark:text-zinc-50 placeholder-zinc-400 dark:placeholder-zinc-500 shadow-xs focus:border-zinc-950 dark:focus:border-zinc-100 focus:ring-2 focus:ring-zinc-950 dark:focus:ring-zinc-100 focus:outline-hidden"
             />
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-400" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-400 dark:text-zinc-500" />
             <button
               type="submit"
               disabled={loading}
-              className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex items-center rounded-full bg-zinc-950 px-5 py-2 text-xs font-bold uppercase tracking-wider text-white transition-colors hover:bg-black disabled:opacity-50"
+              className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex items-center rounded-full bg-zinc-950 dark:bg-zinc-100 px-5 py-2 text-xs font-bold uppercase tracking-wider text-white dark:text-zinc-950 transition-colors hover:bg-zinc-800 dark:hover:bg-zinc-200 disabled:opacity-50 cursor-pointer"
             >
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Search'}
             </button>
@@ -98,23 +98,23 @@ function SearchComponent() {
       {/* Results Area */}
       <main className="mt-10" aria-live="polite">
         {loading && (
-          <div className="flex flex-col items-center justify-center py-16 text-zinc-400">
-            <Loader2 className="h-8 w-8 animate-spin text-zinc-900" />
+          <div className="flex flex-col items-center justify-center py-16 text-zinc-400 dark:text-zinc-500">
+            <Loader2 className="h-8 w-8 animate-spin text-zinc-900 dark:text-zinc-100" />
             <p className="mt-3 text-sm">Searching the editorial archive...</p>
           </div>
         )}
 
         {error && (
-          <div className="mx-auto max-w-md rounded-xs border border-red-200 bg-red-50 p-4 text-center text-sm text-red-700 flex items-center justify-center gap-2">
+          <div className="mx-auto max-w-md rounded-xs border border-red-200 dark:border-red-900/60 bg-red-50 dark:bg-red-950/40 p-4 text-center text-sm text-red-700 dark:text-red-300 flex items-center justify-center gap-2">
             <AlertCircle className="h-4 w-4 shrink-0" />
             <span>{error}</span>
           </div>
         )}
 
         {!loading && searched && results.length === 0 && !error && (
-          <div className="py-16 text-center text-zinc-500 max-w-md mx-auto">
-            <h3 className="font-sans text-lg font-bold text-zinc-950">No stories matched your search</h3>
-            <p className="mt-2 text-sm text-zinc-600">
+          <div className="py-16 text-center text-zinc-500 dark:text-zinc-400 max-w-md mx-auto">
+            <h3 className="font-sans text-lg font-bold text-zinc-950 dark:text-zinc-50">No stories matched your search</h3>
+            <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
               Try searching for broader keywords such as &ldquo;Tech&rdquo;, &ldquo;Travel&rdquo;, or &ldquo;Culture&rdquo;.
             </p>
           </div>
@@ -122,8 +122,8 @@ function SearchComponent() {
 
         {!loading && results.length > 0 && (
           <div>
-            <div className="mb-6 text-xs text-zinc-500">
-              Found <span className="font-bold text-zinc-950">{results.length}</span> stories matching &ldquo;{query}&rdquo;
+            <div className="mb-6 text-xs text-zinc-500 dark:text-zinc-400">
+              Found <span className="font-bold text-zinc-950 dark:text-zinc-50">{results.length}</span> stories matching &ldquo;{query}&rdquo;
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {results.map((article) => (
@@ -141,8 +141,8 @@ export default function SearchPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex items-center justify-center py-20 text-zinc-400">
-          <Loader2 className="h-8 w-8 animate-spin text-zinc-900" />
+        <div className="flex items-center justify-center py-20 text-zinc-400 dark:text-zinc-500">
+          <Loader2 className="h-8 w-8 animate-spin text-zinc-900 dark:text-zinc-100" />
         </div>
       }
     >
