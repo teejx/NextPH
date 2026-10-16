@@ -45,10 +45,10 @@ describe('WordPress Client Data Utilities', () => {
       expect(embed).toBeNull();
     });
 
-    it('accepts trusted direct video files from CMS or local host', () => {
+    it('accepts trusted direct video files from CMS or local host and normalizes local SSL', () => {
       const trusted = 'https://whatsnextph.local/wp-content/uploads/2026/10/demo.mp4';
       const embed = sanitizeVideoEmbedUrl(trusted);
-      expect(embed).toBe(trusted);
+      expect(embed).toBe('http://whatsnextph.local/wp-content/uploads/2026/10/demo.mp4');
     });
   });
 

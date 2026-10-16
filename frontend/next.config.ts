@@ -80,6 +80,14 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: '/wp-content/:path*',
+        destination: 'http://whatsnextph.local/wp-content/:path*',
+      },
+    ];
+  },
 };
 
 export default nextConfig;

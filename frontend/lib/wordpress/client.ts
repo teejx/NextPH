@@ -76,7 +76,29 @@ export function sanitizeHtml(rawHtml: string): string {
   // 5. Remove javascript:, data:, and vbscript: URIs in attributes
   clean = clean.replace(/(href|src)\s*=\s*['"]\s*(?:javascript|data|vbscript):[^'"]*['"]/gi, '$1="#"');
 
+  // 6. Convert local self-signed https://*.local/wp-content/ to http:// in development to prevent ERR_CERT_AUTHORITY_INVALID
+  if (process.env.NODE_ENV !== 'production' || clean.includes('.local')) {
+    clean = clean.replace(/https:\/\/(whatsnextph\.local|nextph-cms\.local|[^/"']+\.local)\/wp-content\//gi, 'http://$1/wp-content/');
+  }
+
   return clean.trim();
+}
+
+/**
+ * Normalize local media URLs for development.
+ * Local self-signed SSL certificates (*.local) cause ERR_CERT_AUTHORITY_INVALID in browsers.
+ * In development, convert local HTTPS media URLs to HTTP to prevent SSL certificate failures.
+ */
+export function normalizeMediaUrl(url?: string | null): string {
+  if (!url) return '';
+  const trimmed = url.trim();
+
+  // Convert https://whatsnextph.local and other *.local domains to http:// in development
+  if (process.env.NODE_ENV !== 'production' || /\.local(?::\d+)?\//i.test(trimmed)) {
+    return trimmed.replace(/^https:\/\/(whatsnextph\.local|nextph-cms\.local|[^/]+\.local)/i, 'http://$1');
+  }
+
+  return trimmed;
 }
 
 /**
@@ -92,7 +114,7 @@ export function sanitizeVideoEmbedUrl(url: string | null | undefined): string | 
     // Check direct video file (.mp4, .webm, .ogg, .mov, .m4v)
     if (isVideoMedia(trimmed)) {
       if (isTrustedVideoHost(trimmed)) {
-        return trimmed;
+        return normalizeMediaUrl(trimmed);
       }
       return null;
     }
@@ -246,14 +268,15 @@ export function transformWPPost(post: WPPostRaw): Article {
   // If the media source URL is an animated GIF, always use original source_url
   // because WordPress PHP GD / image resizing often strips animation frames in thumbnail sizes
   const isFeaturedGif = isGifImage(mediaEmbedded?.source_url);
-  const featuredImgUrl =
+  const featuredImgUrl = normalizeMediaUrl(
     (isFeaturedGif
       ? mediaEmbedded?.source_url || mediaEmbedded?.media_details?.sizes?.full?.source_url
       : mediaEmbedded?.source_url ||
         mediaEmbedded?.media_details?.sizes?.large?.source_url ||
         mediaEmbedded?.media_details?.sizes?.full?.source_url) ||
     contentImgUrl ||
-    fallbackImgUrl;
+    fallbackImgUrl
+  );
 
   const titleClean = decodeHtmlEntities(post.title?.rendered || 'Untitled Dispatch');
   const rawExcerpt = post.excerpt?.rendered?.replace(/<[^>]+>/g, '') || '';
@@ -286,6 +309,8 @@ export function transformWPPost(post: WPPostRaw): Article {
     }
   }
 
+  const normalizedAvatar = authorEmbedded?.avatar_urls?.['96'] || authorEmbedded?.avatar_urls?.['48'];
+
   return {
     id: String(post.id),
     slug: post.slug,
@@ -305,7 +330,7 @@ export function transformWPPost(post: WPPostRaw): Article {
       id: authorEmbedded?.id || 1,
       name: authorEmbedded?.name || "WHAT'S NEXT PH Editorial",
       slug: authorEmbedded?.slug || 'editorial',
-      avatarUrl: authorEmbedded?.avatar_urls?.['96'] || authorEmbedded?.avatar_urls?.['48'],
+      avatarUrl: normalizedAvatar ? normalizeMediaUrl(normalizedAvatar) : undefined,
       bio: authorEmbedded?.description,
     },
     featuredImage: {
@@ -316,7 +341,7 @@ export function transformWPPost(post: WPPostRaw): Article {
     },
     isFeatured: Boolean(post.meta?._nextph_is_featured),
     isTrending: Boolean(post.meta?._nextph_is_trending),
-    videoEmbedUrl: extractedVideoUrl,
+    videoEmbedUrl: extractedVideoUrl ? normalizeMediaUrl(extractedVideoUrl) : null,
   };
 }
 
