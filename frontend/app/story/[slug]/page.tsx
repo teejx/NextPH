@@ -180,7 +180,7 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
           <div className="lg:col-span-8 max-w-[740px] mx-auto lg:mx-0 w-full">
             {/* Article Body Content */}
             <div
-              className="prose prose-zinc max-w-none break-words text-zinc-900 dark:text-zinc-100
+              className="prose prose-zinc dark:prose-invert max-w-none break-words text-zinc-900 dark:text-zinc-100
                 [&>p]:my-6 [&>p]:text-[17px] [&>p]:sm:text-[18px] [&>p]:leading-[1.85] [&>p]:text-zinc-800 dark:[&>p]:text-zinc-200
                 [&>h2]:font-sans [&>h2]:text-2xl [&>h2]:sm:text-3xl [&>h2]:font-black [&>h2]:mt-12 [&>h2]:mb-4 [&>h2]:tracking-tight [&>h2]:text-zinc-950 dark:[&>h2]:text-zinc-50
                 [&>h3]:font-sans [&>h3]:text-xl [&>h3]:sm:text-2xl [&>h3]:font-bold [&>h3]:mt-8 [&>h3]:mb-3 [&>h3]:tracking-tight [&>h3]:text-zinc-900 dark:[&>h3]:text-zinc-100
