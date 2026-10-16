@@ -2,8 +2,8 @@ import React from 'react';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy — NextPH',
-  description: 'How NextPH collects, protects, and respects your personal data in accordance with the Data Privacy Act of 2012 (RA 10173).',
+  title: "Privacy Policy — WHAT'S NEXT PH",
+  description: "How WHAT'S NEXT PH collects, protects, and respects your personal data in accordance with the Data Privacy Act of 2012 (RA 10173).",
 };
 
 export default function PrivacyPolicyPage() {
@@ -19,7 +19,7 @@ export default function PrivacyPolicyPage() {
 
       <main className="prose prose-neutral mt-8 max-w-none text-[#141312] leading-relaxed text-base sm:text-lg">
         <p>
-          NextPH is committed to protecting your privacy and complying with the <strong>Philippine Data Privacy Act of 2012 (Republic Act No. 10173)</strong>, its Implementing Rules and Regulations, and global standards of data dignity.
+          WHAT&apos;S NEXT PH is committed to protecting your privacy and complying with the <strong>Philippine Data Privacy Act of 2012 (Republic Act No. 10173)</strong>, its Implementing Rules and Regulations, and global standards of data dignity.
         </p>
 
         <h2>1. Information We Collect</h2>
@@ -52,7 +52,7 @@ export default function PrivacyPolicyPage() {
 
         <h2>4. Data Subject Rights</h2>
         <p>
-          Under the Data Privacy Act of 2012, you hold the right to be informed, right to access, right to object, right to erasure or blocking, and right to damages. To exercise any of these rights, contact our Data Protection Officer at <code>dpo@nextph.example</code>.
+          Under the Data Privacy Act of 2012, you hold the right to be informed, right to access, right to object, right to erasure or blocking, and right to damages. To exercise any of these rights, contact our Data Protection Officer at <code>dpo@whatsnextph.example</code>.
         </p>
       </main>
     </div>

@@ -5,9 +5,8 @@ test.describe('NextPH Editorial Platform Smoke & E2E Tests', () => {
     await page.goto('/');
 
     // Check title and masthead
-    await expect(page).toHaveTitle(/NextPH/);
-    await expect(page.locator('header')).toContainText('NextPH');
-    await expect(page.locator('header')).toContainText('Philippines Edition');
+    await expect(page).toHaveTitle(/WHAT'S NEXT PH/);
+    await expect(page.locator('header')).toContainText("WHAT'S NEXT");
 
     // Hero headline and trending
     const heroHeading = page.locator('article h1');
@@ -89,7 +88,7 @@ test.describe('NextPH Editorial Platform Smoke & E2E Tests', () => {
 
   test('search page handles query input and displays matching results', async ({ page }) => {
     await page.goto('/search');
-    await expect(page.locator('h1')).toContainText('Search NextPH Stories');
+    await expect(page.locator('h1')).toContainText("Search WHAT'S NEXT PH Stories");
 
     const searchInput = page.locator('#search-input');
     await searchInput.fill('Fintech');

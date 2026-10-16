@@ -64,7 +64,7 @@ function SearchComponent() {
       <header className="border-b border-zinc-200 pb-8 text-center max-w-2xl mx-auto">
         <span className="text-[11px] font-bold uppercase tracking-widest text-zinc-400">Archive Search</span>
         <h1 className="mt-2 font-sans text-3xl sm:text-4xl font-black tracking-tight text-zinc-950">
-          Search NextPH Stories
+          Search WHAT&apos;S NEXT PH Stories
         </h1>
         <p className="mt-3 text-sm text-zinc-600">
           Search our full catalog of Filipino technology, travel, lifestyle, and trending stories.

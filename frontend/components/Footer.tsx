@@ -9,12 +9,12 @@ export const Footer: React.FC = () => {
           {/* Brand & Mission Column */}
           <div className="lg:col-span-2">
             <Link href="/" className="inline-block">
-              <span className="font-sans text-2xl sm:text-3xl font-black tracking-tighter text-white">
-                NEXT<span className="text-zinc-500 font-light"> PH</span>
+              <span className="font-sans text-xl sm:text-2xl font-black tracking-tight text-white">
+                WHAT&apos;S NEXT <span className="text-zinc-500 font-light">PH</span>
               </span>
             </Link>
             <p className="mt-4 text-xs sm:text-sm text-zinc-400 leading-relaxed max-w-sm">
-              NextPH is an independent Filipino digital magazine covering technology breakthroughs, archipelago travel, contemporary lifestyle, and curated trending stories.
+              WHAT&apos;S NEXT PH is an independent Filipino digital magazine covering technology breakthroughs, archipelago travel, contemporary lifestyle, and curated trending stories.
             </p>
             <div className="mt-6 text-[11px] uppercase tracking-wider text-zinc-500">
               Published from Manila, Philippines
@@ -102,7 +102,7 @@ export const Footer: React.FC = () => {
             <ul className="mt-4 space-y-2.5 text-xs">
               <li>
                 <Link href="/about" className="text-zinc-400 hover:text-white transition-colors">
-                  About NextPH
+                  About WHAT&apos;S NEXT PH
                 </Link>
               </li>
               <li>
@@ -131,7 +131,7 @@ export const Footer: React.FC = () => {
 
         {/* Bottom Bar */}
         <div className="mt-12 border-t border-zinc-900 pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-zinc-500 gap-4">
-          <p>© {new Date().getFullYear()} NextPH Media. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} WHAT&apos;S NEXT PH Media. All rights reserved.</p>
           <p className="text-center sm:text-right font-mono text-[11px]">
             Cloudflare Workers & Headless WordPress
           </p>

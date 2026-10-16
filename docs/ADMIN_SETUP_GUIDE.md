@@ -1,6 +1,6 @@
-# NextPH Editorial Admin Guide (/wp-admin)
+# WHAT'S NEXT PH Editorial Admin Guide (/wp-admin)
 
-NextPH uses **WordPress** as its headless Content Management System (CMS). Content creation, drafting, media uploads, and publishing are performed inside **WordPress `/wp-admin`**, while the public website is delivered by Next.js on `http://localhost:3000`.
+WHAT'S NEXT PH uses **WordPress** as its headless Content Management System (CMS). Content creation, drafting, media uploads, and publishing are performed inside **WordPress `/wp-admin`**, while the public website is delivered by Next.js on `http://localhost:3000`.
 
 ---
 
@@ -10,16 +10,20 @@ Your admin dashboard URL depends on where your WordPress CMS is hosted:
 
 ### Option A: Local Development via LocalWP (Recommended for Windows without Docker)
 1. Download and install **[LocalWP](https://localwp.com)** (free, native Windows app).
-2. Click **Create a new site** > name it `nextph-cms`.
-3. Choose PHP 8.2 or 8.3 and MySQL.
-4. Click **WP Admin** or open `http://nextph-cms.local/wp-admin` in your browser.
-5. Copy the NextPH plugin:
+2. Site domain & SSL configuration:
+   - Site name: `whatsnextph`
+   - Site domain: `whatsnextph.local`
+   - To enable SSL: In Local's **Site Overview**, click **Trust** next to SSL to install the root certificate.
+3. Access WP Admin:
+   - Open **`https://whatsnextph.local/wp-admin`** in your browser.
+4. Copy the WHAT'S NEXT PH plugin:
    - Copy `backend/wordpress/wp-content/plugins/nextph-core` into your Local site's `app/public/wp-content/plugins/` folder.
    - Activate **NextPH Core** in WordPress > Plugins.
-6. Connect your Next.js frontend:
+5. Connect your Next.js frontend:
    - In `frontend/.env.local`:
      ```env
-     WORDPRESS_API_URL=http://nextph-cms.local/wp-json
+     WORDPRESS_API_URL=https://whatsnextph.local/wp-json
+     NODE_TLS_REJECT_UNAUTHORIZED=0
      ```
 
 ### Option B: Local Development via Docker Compose

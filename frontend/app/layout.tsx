@@ -19,20 +19,20 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
   title: {
-    default: 'NextPH — Filipino Digital Magazine | Tech, Travel & Lifestyle',
-    template: '%s | NextPH',
+    default: "WHAT'S NEXT PH — Filipino Digital Magazine | Tech, Travel & Lifestyle",
+    template: "%s | WHAT'S NEXT PH",
   },
   description:
-    'NextPH is a modern Filipino digital magazine covering technology innovations, archipelago travel, contemporary lifestyle, and curated trending stories.',
+    "WHAT'S NEXT PH is a modern Filipino digital magazine covering technology innovations, archipelago travel, contemporary lifestyle, and curated trending stories.",
   keywords: ['Philippines', 'Filipino', 'Technology', 'Travel', 'Lifestyle', 'Trending', 'Digital Magazine'],
-  authors: [{ name: 'NextPH Editorial Desk' }],
-  creator: 'NextPH',
+  authors: [{ name: "WHAT'S NEXT PH Editorial Desk" }],
+  creator: "WHAT'S NEXT PH",
   openGraph: {
     type: 'website',
     locale: 'en_PH',
     url: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
-    siteName: 'NextPH',
-    title: 'NextPH — Filipino Digital Magazine',
+    siteName: "WHAT'S NEXT PH",
+    title: "WHAT'S NEXT PH — Filipino Digital Magazine",
     description:
       'Curated stories in technology breakthroughs, archipelago journeys, and contemporary culture from the Philippines.',
     images: [
@@ -40,13 +40,13 @@ export const metadata: Metadata = {
         url: '/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'NextPH — Contemporary Filipino Digital Magazine',
+        alt: "WHAT'S NEXT PH — Contemporary Filipino Digital Magazine",
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'NextPH — Filipino Digital Magazine',
+    title: "WHAT'S NEXT PH — Filipino Digital Magazine",
     description:
       'Curated stories in technology breakthroughs, archipelago journeys, and contemporary culture from the Philippines.',
     images: ['/og-image.jpg'],

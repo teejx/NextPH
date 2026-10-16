@@ -4,8 +4,8 @@ import { Mail, MapPin, Send } from 'lucide-react';
 import { ContactForm } from '../../components/ContactForm';
 
 export const metadata: Metadata = {
-  title: 'Contact the NextPH Editorial Desk',
-  description: 'Get in touch with the NextPH team for story tips, editorial pitches, press inquiries, and reader feedback.',
+  title: "Contact the WHAT'S NEXT PH Editorial Desk",
+  description: "Get in touch with the WHAT'S NEXT PH team for story tips, editorial pitches, press inquiries, and reader feedback.",
 };
 
 export default function ContactPage() {
@@ -30,7 +30,7 @@ export default function ContactPage() {
               <Mail className="h-5 w-5 text-[#C43622] shrink-0 mt-0.5" />
               <div>
                 <strong className="block text-[#141312]">Story Tips & Press Releases</strong>
-                <span className="text-[#76716B]">editor@nextph.example</span>
+                <span className="text-[#76716B]">editor@whatsnextph.example</span>
               </div>
             </div>
 
@@ -38,7 +38,7 @@ export default function ContactPage() {
               <Send className="h-5 w-5 text-[#C43622] shrink-0 mt-0.5" />
               <div>
                 <strong className="block text-[#141312]">Pitching Guidelines</strong>
-                <span className="text-[#76716B]">pitches@nextph.example</span>
+                <span className="text-[#76716B]">pitches@whatsnextph.example</span>
                 <p className="text-xs text-[#76716B] mt-1">
                   Please include a 2-paragraph summary, proposed sources, and sample writing clips.
                 </p>

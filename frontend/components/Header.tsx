@@ -138,9 +138,10 @@ export const Header: React.FC = () => {
         <div className="flex items-center gap-8">
           <Link
             href="/"
-            className="group flex items-center font-sans text-2xl sm:text-3xl font-black tracking-tight text-zinc-950 transition-opacity hover:opacity-80"
+            className="group flex items-center font-sans text-xl sm:text-2xl font-black tracking-tight text-zinc-950 transition-opacity hover:opacity-80"
           >
-            NEXT<span className="text-zinc-400 font-light ml-0.5 text-xl sm:text-2xl">PH</span>
+            <span>WHAT&apos;S NEXT</span>
+            <span className="text-zinc-400 font-light ml-1.5 text-lg sm:text-xl">PH</span>
           </Link>
 
           {/* Desktop Navigation with Minimalist Editorial Slashes (hidden when search is active on smaller screens) */}
@@ -354,7 +355,7 @@ export const Header: React.FC = () => {
                 onClick={() => setMobileMenuOpen(false)}
                 className="block py-1 text-xs text-zinc-500 hover:text-black"
               >
-                About NextPH
+                About WHAT&apos;S NEXT PH
               </Link>
               <Link
                 href="/contact"

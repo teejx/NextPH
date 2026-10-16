@@ -111,7 +111,7 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
     ],
     publisher: {
       '@type': 'Organization',
-      name: 'NextPH',
+      name: "WHAT'S NEXT PH",
       logo: {
         '@type': 'ImageObject',
         url: `${siteUrl}/logo.png`,
@@ -180,7 +180,7 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
               )}
               <div>
                 <span className="block font-bold text-zinc-950">{article.author.name}</span>
-                <span className="text-[10px] uppercase tracking-wider text-zinc-400">NextPH Editorial</span>
+                <span className="text-[10px] uppercase tracking-wider text-zinc-400">WHAT&apos;S NEXT PH Editorial</span>
               </div>
             </div>
 

@@ -17,7 +17,7 @@ export const ContactForm: React.FC = () => {
         <CheckCircle2 className="mx-auto h-8 w-8 text-green-600" />
         <h4 className="mt-3 font-serif text-lg font-bold text-[#141312]">Message Received</h4>
         <p className="mt-1 text-xs text-[#4A4642]">
-          Thank you for reaching out to the NextPH editorial desk. We review every pitch and inquiry promptly.
+          Thank you for reaching out to the WHAT&apos;S NEXT PH editorial desk. We review every pitch and inquiry promptly.
         </p>
       </div>
     );

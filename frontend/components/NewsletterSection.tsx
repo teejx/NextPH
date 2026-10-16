@@ -105,7 +105,7 @@ export const NewsletterSection: React.FC = () => {
                   type="email"
                   id="newsletter-email"
                   required
-                  placeholder="Enter your email (e.g. editor@nextph.ph)"
+                  placeholder="Enter your email (e.g. editor@whatsnextph.ph)"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full rounded-xs border border-zinc-300 bg-white px-4 py-3 text-sm text-zinc-950 placeholder-zinc-400 transition-colors focus:border-zinc-950 focus:ring-2 focus:ring-zinc-950 focus:outline-hidden"
@@ -136,7 +136,7 @@ export const NewsletterSection: React.FC = () => {
                 className="mt-1 h-4 w-4 rounded-xs border-zinc-300 text-zinc-950 focus:ring-zinc-950"
               />
               <label htmlFor="newsletter-consent" className="text-xs text-zinc-500">
-                I consent to receive weekly editorial newsletters from NextPH. Unsubscribe at any time. Read our{' '}
+                I consent to receive weekly editorial newsletters from WHAT&apos;S NEXT PH. Unsubscribe at any time. Read our{' '}
                 <Link href="/privacy-policy" className="underline hover:text-zinc-950">
                   Privacy Policy
                 </Link>

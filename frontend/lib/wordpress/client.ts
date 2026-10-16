@@ -89,13 +89,47 @@ export function sanitizeVideoEmbedUrl(url: string | null | undefined): string | 
 const categoryIdCache: Record<string, number> = {};
 
 /**
+ * Resilient WordPress REST API fetcher.
+ * Automatically tries primary configured URL (e.g. https://whatsnextph.local/wp-json),
+ * with seamless fallback to previous development domain during migration.
+ */
+async function fetchWP(pathAndQuery: string, options?: RequestInit): Promise<Response> {
+  const primaryUrl = `${WP_API_URL}${pathAndQuery}`;
+  try {
+    const res = await fetch(primaryUrl, options);
+    if (res.ok || res.status === 404) return res;
+  } catch (err) {
+    if (process.env.NODE_ENV !== 'production' && WP_API_URL.includes('whatsnextph')) {
+      try {
+        const fallbackRes = await fetch(`http://nextph-cms.local/wp-json${pathAndQuery}`, options);
+        if (fallbackRes.ok) return fallbackRes;
+      } catch {
+        // ignore fallback failure and throw original error
+      }
+    }
+    throw err;
+  }
+
+  if (process.env.NODE_ENV !== 'production' && WP_API_URL.includes('whatsnextph')) {
+    try {
+      const fallbackRes = await fetch(`http://nextph-cms.local/wp-json${pathAndQuery}`, options);
+      if (fallbackRes.ok) return fallbackRes;
+    } catch {
+      // ignore
+    }
+  }
+
+  return fetch(primaryUrl, options);
+}
+
+/**
  * Resolve a category slug to a WordPress category ID.
  */
 async function getCategoryIdBySlug(slug: string): Promise<number | null> {
   if (categoryIdCache[slug]) return categoryIdCache[slug];
 
   try {
-    const res = await fetch(`${WP_API_URL}/wp/v2/categories?slug=${encodeURIComponent(slug)}`, {
+    const res = await fetchWP(`/wp/v2/categories?slug=${encodeURIComponent(slug)}`, {
       next: { revalidate: 3600 },
     });
     if (res.ok) {
@@ -172,7 +206,7 @@ export function transformWPPost(post: WPPostRaw): Article {
     tags: tags.map((t) => ({ id: t.id, name: decodeHtmlEntities(t.name), slug: t.slug })),
     author: {
       id: authorEmbedded?.id || 1,
-      name: authorEmbedded?.name || 'NextPH Editorial',
+      name: authorEmbedded?.name || "WHAT'S NEXT PH Editorial",
       slug: authorEmbedded?.slug || 'editorial',
       avatarUrl: authorEmbedded?.avatar_urls?.['96'] || authorEmbedded?.avatar_urls?.['48'],
       bio: authorEmbedded?.description,
@@ -219,7 +253,7 @@ export async function getArticles(options: {
       params.append('search', search);
     }
 
-    const res = await fetch(`${WP_API_URL}/wp/v2/posts?${params.toString()}`, {
+    const res = await fetchWP(`/wp/v2/posts?${params.toString()}`, {
       next: { revalidate: 120 }, // 2-minute ISR
     });
 
@@ -281,7 +315,7 @@ export async function getArticles(options: {
  */
 export async function getArticleBySlug(slug: string): Promise<Article | null> {
   try {
-    const res = await fetch(`${WP_API_URL}/wp/v2/posts?slug=${encodeURIComponent(slug)}&_embed=1`, {
+    const res = await fetchWP(`/wp/v2/posts?slug=${encodeURIComponent(slug)}&_embed=1`, {
       next: { revalidate: 120 },
     });
 
@@ -307,7 +341,7 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
  */
 export async function getTrendingStories(limit: number = 6): Promise<Article[]> {
   try {
-    const res = await fetch(`${WP_API_URL}/nextph/v1/trending?limit=${limit}&_embed=1`, {
+    const res = await fetchWP(`/nextph/v1/trending?limit=${limit}&_embed=1`, {
       next: { revalidate: 120 },
     });
 
@@ -326,7 +360,7 @@ export async function getTrendingStories(limit: number = 6): Promise<Article[]> 
  */
 export async function getFeaturedStories(limit: number = 4): Promise<Article[]> {
   try {
-    const res = await fetch(`${WP_API_URL}/wp/v2/posts?per_page=${limit}&_embed=1`, {
+    const res = await fetchWP(`/wp/v2/posts?per_page=${limit}&_embed=1`, {
       next: { revalidate: 120 },
     });
     if (res.ok) {

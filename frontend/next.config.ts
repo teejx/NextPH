@@ -46,6 +46,22 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'http',
+        hostname: 'whatsnextph.local',
+      },
+      {
+        protocol: 'https',
+        hostname: 'whatsnextph.local',
+      },
+      {
+        protocol: 'http',
+        hostname: 'whatsnextph',
+      },
+      {
+        protocol: 'https',
+        hostname: 'whatsnextph',
+      },
+      {
+        protocol: 'http',
         hostname: 'nextph-cms.local',
       },
       {
