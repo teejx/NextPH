@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Metadata } from 'next';
-import { Mail, MapPin, Send } from 'lucide-react';
+import { Mail, MapPin, Send, Clock, Shield } from 'lucide-react';
 import { ContactForm } from '../../components/ContactForm';
 
 export const metadata: Metadata = {
@@ -10,55 +10,108 @@ export const metadata: Metadata = {
 
 export default function ContactPage() {
   return (
-    <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
-      <header className="border-b border-[#CCC7BD] pb-8">
-        <span className="text-xs font-bold uppercase tracking-widest text-[#C43622]">Contact & Inquiries</span>
-        <h1 className="mt-2 font-serif text-3xl sm:text-5xl font-bold tracking-tight text-[#141312]">
+    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      {/* Header */}
+      <header className="border-b border-zinc-200 pb-10">
+        <span className="text-[11px] font-bold uppercase tracking-widest text-zinc-400">
+          Contact & Inquiries
+        </span>
+        <h1 className="mt-3 font-sans text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-zinc-950 leading-tight">
           Get in Touch
         </h1>
-        <p className="mt-3 text-base text-[#4A4642]">
-          We welcome thoughtful story pitches, confidential news tips, corrections, and general feedback.
+        <p className="mt-4 text-base sm:text-lg text-zinc-600 max-w-3xl leading-relaxed font-light">
+          We welcome confidential story leads, freelance pitches, reader corrections, and media inquiries from across the archipelago.
         </p>
       </header>
 
-      <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-12">
-        <div>
-          <h2 className="font-serif text-xl font-bold text-[#141312]">Editorial Contacts</h2>
-          
-          <div className="mt-6 space-y-6 text-sm text-[#4A4642]">
-            <div className="flex items-start gap-3">
-              <Mail className="h-5 w-5 text-[#C43622] shrink-0 mt-0.5" />
-              <div>
-                <strong className="block text-[#141312]">Story Tips & Press Releases</strong>
-                <span className="text-[#76716B]">editor@whatsnextph.example</span>
+      <div className="mt-12 grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+        {/* Left Column: Editorial Channels (5-Cols) */}
+        <div className="lg:col-span-5 space-y-6">
+          <div className="rounded-xs border border-zinc-200 bg-white p-6 sm:p-8 shadow-xs">
+            <h2 className="font-sans text-lg sm:text-xl font-bold text-zinc-950 tracking-tight">
+              Direct Desks
+            </h2>
+            <div className="mt-6 space-y-6 text-sm">
+              <div className="flex items-start gap-4">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xs bg-zinc-100 text-zinc-900">
+                  <Mail className="h-4 w-4" />
+                </div>
+                <div>
+                  <strong className="block text-xs font-bold uppercase tracking-wider text-zinc-950">
+                    Story Leads & News Tips
+                  </strong>
+                  <span className="text-sm font-medium text-zinc-600 select-all">
+                    editor@whatsnextph.local
+                  </span>
+                  <p className="text-xs text-zinc-400 mt-1">
+                    For time-sensitive reports, breaking developments, or encrypted documents.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xs bg-zinc-100 text-zinc-900">
+                  <Send className="h-4 w-4" />
+                </div>
+                <div>
+                  <strong className="block text-xs font-bold uppercase tracking-wider text-zinc-950">
+                    Freelance Pitch Desk
+                  </strong>
+                  <span className="text-sm font-medium text-zinc-600 select-all">
+                    pitches@whatsnextph.local
+                  </span>
+                  <p className="text-xs text-zinc-400 mt-1">
+                    Include a 2-paragraph premise, intended primary sources, and 2 sample writing links.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xs bg-zinc-100 text-zinc-900">
+                  <MapPin className="h-4 w-4" />
+                </div>
+                <div>
+                  <strong className="block text-xs font-bold uppercase tracking-wider text-zinc-950">
+                    Editorial Bureau
+                  </strong>
+                  <span className="text-sm text-zinc-600">
+                    Manila, National Capital Region, Philippines
+                  </span>
+                </div>
               </div>
             </div>
+          </div>
 
-            <div className="flex items-start gap-3">
-              <Send className="h-5 w-5 text-[#C43622] shrink-0 mt-0.5" />
-              <div>
-                <strong className="block text-[#141312]">Pitching Guidelines</strong>
-                <span className="text-[#76716B]">pitches@whatsnextph.example</span>
-                <p className="text-xs text-[#76716B] mt-1">
-                  Please include a 2-paragraph summary, proposed sources, and sample writing clips.
-                </p>
-              </div>
+          {/* Response Promise Card */}
+          <div className="rounded-xs border border-zinc-200 bg-zinc-50 p-6 space-y-4">
+            <div className="flex items-center gap-3 text-zinc-950 font-bold text-xs uppercase tracking-wider">
+              <Clock className="h-4 w-4 text-zinc-900" />
+              <span>Response Turnaround</span>
             </div>
-
-            <div className="flex items-start gap-3">
-              <MapPin className="h-5 w-5 text-[#C43622] shrink-0 mt-0.5" />
-              <div>
-                <strong className="block text-[#141312]">Office Location</strong>
-                <span className="text-[#76716B]">Manila, National Capital Region, Philippines</span>
-              </div>
+            <p className="text-xs text-zinc-600 leading-relaxed">
+              Our editorial staff aims to acknowledge story pitches and leads within 48 business hours. Verified factual corrections are prioritized immediately.
+            </p>
+            <div className="flex items-center gap-2 pt-2 border-t border-zinc-200 text-[11px] text-zinc-500">
+              <Shield className="h-3.5 w-3.5 text-zinc-900" />
+              <span>Source confidentiality respected under Philippine journalist privilege.</span>
             </div>
           </div>
         </div>
 
-        {/* Client-side Contact Form */}
-        <div className="rounded-sm border border-[#CCC7BD] bg-[#F3EFEA] p-6 sm:p-8">
-          <h3 className="font-serif text-lg font-bold text-[#141312]">Send a Message</h3>
-          <ContactForm />
+        {/* Right Column: Contact Form (7-Cols) */}
+        <div className="lg:col-span-7">
+          <div className="rounded-xs border border-zinc-200 bg-white p-7 sm:p-9 shadow-xs">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">
+              Digital Dispatch
+            </span>
+            <h3 className="mt-1 font-sans text-xl sm:text-2xl font-black text-zinc-950 tracking-tight">
+              Send a Message to the Desk
+            </h3>
+            <p className="mt-2 text-xs sm:text-sm text-zinc-600 leading-relaxed">
+              Fill out the form below and your message will be routed directly to the appropriate section editor.
+            </p>
+            <ContactForm />
+          </div>
         </div>
       </div>
     </div>
