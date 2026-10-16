@@ -63,12 +63,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${newsreader.variable} ${inter.variable}`}>
-      <body className="min-h-screen flex flex-col bg-[#FBF9F5] text-[#141312] font-sans antialiased selection:bg-[#FDF1EE] selection:text-[#C43622]">
+    <html lang="en" suppressHydrationWarning className={`${newsreader.variable} ${inter.variable}`}>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}else{document.documentElement.classList.remove('dark');}}catch(e){}})();`,
+          }}
+        />
+      </head>
+      <body className="min-h-screen flex flex-col bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 font-sans antialiased selection:bg-zinc-900 selection:text-white dark:selection:bg-zinc-100 dark:selection:text-zinc-950">
         {/* Skip to Content for Screen Readers & Keyboard Navigation */}
         <a
           href="#main-content"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-sm focus:bg-[#141312] focus:px-4 focus:py-2 focus:text-white focus:outline-2 focus:outline-[#C43622]"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-sm focus:bg-zinc-950 focus:px-4 focus:py-2 focus:text-white focus:outline-2 focus:outline-zinc-400"
         >
           Skip to main content
         </a>
