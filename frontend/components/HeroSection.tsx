@@ -58,10 +58,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   }
 
   return (
-    <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch pt-6 pb-10">
-      {/* Primary Featured Story Card (Dark Obsidian Carousel Container) */}
+    <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-stretch pt-6 pb-10">
+      {/* Primary Featured Story Card (16:9 1080p Widescreen Carousel Container) */}
       <div
-        className="lg:col-span-8 group relative overflow-hidden rounded-xs bg-[#111113] text-white min-h-[460px] sm:min-h-[500px] flex flex-col justify-between"
+        className="lg:col-span-8 group relative overflow-hidden rounded-xs bg-[#111113] text-white w-full aspect-[16/10] sm:aspect-[16/9] min-h-[380px] sm:min-h-[440px] lg:min-h-[460px] flex flex-col justify-between shadow-md"
         role="region"
         aria-roledescription="carousel"
         aria-label="Featured Stories Carousel"
@@ -71,48 +71,75 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         onFocus={() => setIsPaused(true)}
         onBlur={() => setIsPaused(false)}
       >
-        {/* Full-bleed Images Stack: ambient fill + unzoomed complete foreground image + directional fade */}
+        {/* Full-bleed Images Stack: full card occupancy for big photos, fade fallback for narrow photos */}
         <div className="absolute inset-0 w-full h-full overflow-hidden">
-          {stories.map((story, idx) => (
-            <Link
-              key={`hero-img-${story.id}-${idx}`}
-              href={`/story/${story.slug}`}
-              tabIndex={idx === currentIndex ? 0 : -1}
-              aria-label={`Read ${story.title}`}
-              className={`absolute inset-0 block transition-opacity duration-700 ease-in-out ${
-                idx === currentIndex ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none z-0'
-              }`}
-            >
-              {/* Single full-height horizontal image with focus on right, exactly matching Image 2 */}
-              <div className="absolute inset-0 w-full h-full overflow-hidden">
-                <Image
-                  src={story.featuredImage.url}
-                  alt={story.featuredImage.alt || story.title}
-                  fill
-                  priority={idx === 0}
-                  sizes="(max-width: 1024px) 100vw, 66vw"
-                  className="object-cover object-[75%_center] md:object-right pointer-events-none"
-                />
-              </div>
+          {stories.map((story, idx) => {
+            const isSmallWidth =
+              story.featuredImage.width && story.featuredImage.height
+                ? story.featuredImage.width / story.featuredImage.height < 1.25
+                : false;
 
-              {/* Smooth directional fade into solid black on the left side for stark text readability */}
-              <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-[#111113] via-[#111113]/85 via-45% to-transparent pointer-events-none z-10" />
-            </Link>
-          ))}
+            return (
+              <Link
+                key={`hero-img-${story.id}-${idx}`}
+                href={`/story/${story.slug}`}
+                tabIndex={idx === currentIndex ? 0 : -1}
+                aria-label={`Read ${story.title}`}
+                className={`absolute inset-0 block transition-opacity duration-700 ease-in-out ${
+                  idx === currentIndex ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none z-0'
+                }`}
+              >
+                {isSmallWidth ? (
+                  /* Fallback for narrow/portrait photos: positioned on right with smooth fade into dark on left */
+                  <>
+                    <div className="absolute inset-0 w-full h-full flex justify-end items-center">
+                      <div className="relative w-full sm:w-[65%] h-full">
+                        <Image
+                          src={story.featuredImage.url}
+                          alt={story.featuredImage.alt || story.title}
+                          fill
+                          priority={idx === 0}
+                          sizes="(max-width: 1024px) 100vw, 55vw"
+                          className="object-contain object-right pointer-events-none"
+                        />
+                      </div>
+                    </div>
+                    <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-[#111113] via-[#111113]/85 via-45% to-transparent pointer-events-none z-10" />
+                  </>
+                ) : (
+                  /* 1080p / wide landscape photo: occupies the WHOLE feature area without fade, just text with shadows */
+                  <>
+                    <div className="absolute inset-0 w-full h-full overflow-hidden">
+                      <Image
+                        src={story.featuredImage.url}
+                        alt={story.featuredImage.alt || story.title}
+                        fill
+                        priority={idx === 0}
+                        sizes="(max-width: 1024px) 100vw, 68vw"
+                        className="object-cover object-center pointer-events-none"
+                      />
+                    </div>
+                    {/* Subtle ambient darkening for crystal clear text legibility across all highlights */}
+                    <div className="absolute inset-0 bg-black/20 pointer-events-none z-10" />
+                  </>
+                )}
+              </Link>
+            );
+          })}
         </div>
 
         {/* Left-side Text Content Column with text drop shadows */}
-        <div className="relative z-20 flex flex-col justify-between p-8 sm:p-10 lg:p-12 w-full md:w-[65%] lg:w-[60%] min-h-[460px] sm:min-h-[500px] pointer-events-none pb-16 sm:pb-20">
+        <div className="relative z-20 flex flex-col justify-between p-8 sm:p-10 lg:p-12 w-full md:w-[68%] lg:w-[62%] min-h-full pointer-events-none pb-16 sm:pb-20">
           <div className="pointer-events-auto transition-opacity duration-500 ease-out">
-            <span className="text-[11px] font-bold uppercase tracking-widest text-zinc-300 drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
+            <span className="text-[11px] font-bold uppercase tracking-widest text-zinc-200 drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)]">
               {currentStory.category.name}
             </span>
-            <h1 className="mt-4 font-sans text-3xl sm:text-4xl lg:text-5xl font-black leading-tight tracking-tight text-white group-hover:text-zinc-200 transition-colors drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
+            <h1 className="mt-4 font-sans text-3xl sm:text-4xl lg:text-5xl font-black leading-tight tracking-tight text-white group-hover:text-zinc-200 transition-colors drop-shadow-[0_4px_12px_rgba(0,0,0,0.95)] drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
               <Link href={`/story/${currentStory.slug}`}>
                 {currentStory.title}
               </Link>
             </h1>
-            <p className="mt-4 text-sm sm:text-base text-zinc-200 leading-relaxed line-clamp-3 max-w-md drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)]">
+            <p className="mt-4 text-sm sm:text-base text-zinc-100 leading-relaxed line-clamp-3 max-w-md drop-shadow-[0_2px_6px_rgba(0,0,0,0.95)]">
               {currentStory.excerpt}
             </p>
           </div>
@@ -121,7 +148,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           <div className="mt-8 pointer-events-auto">
             <Link
               href={`/story/${currentStory.slug}`}
-              className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white transition-transform hover:translate-x-1 drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]"
+              className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white transition-transform hover:translate-x-1 drop-shadow-[0_2px_6px_rgba(0,0,0,0.95)]"
             >
               <span>Read More</span>
               <ArrowRight className="h-3.5 w-3.5" />
@@ -178,26 +205,29 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         )}
       </div>
 
-      {/* Right Sidebar: 3 Stacked Stories */}
-      <div className="lg:col-span-4 flex flex-col justify-between divide-y divide-zinc-200 border-t border-b lg:border-t-0 lg:border-b-0 border-zinc-200 py-2 lg:py-0">
+      {/* Right Sidebar: 3 Stacked Stories - Moved to right side with bigger pictures */}
+      <div className="lg:col-span-4 flex flex-col justify-between divide-y divide-zinc-200 border-t border-b lg:border-t-0 lg:border-b-0 border-zinc-200 py-1 lg:py-0">
         {sidebarStories.slice(0, 3).map((story, idx) => (
-          <article key={`hero-sidebar-${story.id}-${idx}`} className="group flex gap-4 py-4 first:pt-0 last:pb-0 items-center">
-            {/* Thumbnail */}
+          <article
+            key={`hero-sidebar-${story.id}-${idx}`}
+            className="group flex gap-4 sm:gap-5 py-4 first:pt-0 last:pb-0 items-center"
+          >
+            {/* Thumbnail: Rectangular & Bigger matching uploaded design */}
             <Link
               href={`/story/${story.slug}`}
-              className="relative h-24 w-24 sm:h-28 sm:w-28 shrink-0 overflow-hidden rounded-xs bg-zinc-100"
+              className="relative w-36 sm:w-40 lg:w-44 h-24 sm:h-28 lg:h-30 shrink-0 overflow-hidden rounded-xs bg-zinc-100 shadow-2xs"
             >
               <Image
                 src={story.featuredImage.url}
                 alt={story.featuredImage.alt || story.title}
                 fill
-                sizes="112px"
+                sizes="(max-width: 1024px) 160px, 180px"
                 className="object-cover transition-transform duration-500 group-hover:scale-105"
               />
             </Link>
 
             {/* Details */}
-            <div className="flex flex-col justify-center grow">
+            <div className="flex flex-col justify-center grow min-w-0">
               <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">
                 {story.category.name}
               </span>
