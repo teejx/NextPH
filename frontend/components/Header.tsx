@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { Search, Menu, X, ArrowRight, Loader2 } from 'lucide-react';
 import { Article } from '../lib/wordpress/types';
+import { isGifImage } from '../lib/media';
 
 const NAV_ITEMS = [
   { name: 'News', href: '/news' },
@@ -271,6 +272,7 @@ export const Header: React.FC = () => {
                                   src={article.featuredImage.url}
                                   alt={article.title}
                                   fill
+                                  unoptimized={isGifImage(article.featuredImage.url)}
                                   sizes="44px"
                                   className="object-cover"
                                 />

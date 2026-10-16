@@ -10,6 +10,7 @@ import { VideoEmbed } from '../../../components/VideoEmbed';
 import { StoryCard } from '../../../components/StoryCard';
 import { NewsletterSection } from '../../../components/NewsletterSection';
 import { AdSlot } from '../../../components/AdSlot';
+import { isGifImage, isVideoMedia } from '../../../lib/media';
 
 interface StoryPageProps {
   params: Promise<{
@@ -205,6 +206,8 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
 
         {/* Hero Featured Media - Maximized full container width */}
         {(() => {
+          const isVideo = isVideoMedia(article.featuredImage.url);
+          const isGif = isGifImage(article.featuredImage.url);
           const isPortrait =
             article.featuredImage.width && article.featuredImage.height
               ? article.featuredImage.height > article.featuredImage.width * 1.05
@@ -213,32 +216,45 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
           return (
             <figure className={`my-8 w-full ${isPortrait ? 'flex flex-col items-center' : 'w-full max-w-7xl'}`}>
               <div
-                className={`relative overflow-hidden rounded-xs border border-zinc-200 bg-zinc-100 ${
+                className={`relative overflow-hidden rounded-xs border border-zinc-200 bg-zinc-950 ${
                   isPortrait
                     ? 'w-full max-w-lg aspect-3/4 sm:aspect-2/3 shadow-xl ring-1 ring-zinc-900/5'
                     : 'w-full aspect-16/10 sm:aspect-16/9 lg:aspect-21/10 shadow-sm'
                 }`}
               >
-                <Image
-                  src={article.featuredImage.url}
-                  alt={article.featuredImage.alt || article.title}
-                  fill
-                  priority
-                  sizes={isPortrait ? '(max-width: 768px) 100vw, 512px' : '100vw'}
-                  className="object-cover"
-                />
+                {isVideo ? (
+                  <video
+                    controls
+                    playsInline
+                    preload="metadata"
+                    className="h-full w-full object-cover"
+                  >
+                    <source src={article.featuredImage.url} />
+                    Your browser does not support the video tag.
+                  </video>
+                ) : (
+                  <Image
+                    src={article.featuredImage.url}
+                    alt={article.featuredImage.alt || article.title}
+                    fill
+                    priority
+                    unoptimized={isGif}
+                    sizes={isPortrait ? '(max-width: 768px) 100vw, 512px' : '100vw'}
+                    className="object-cover"
+                  />
+                )}
               </div>
               {article.featuredImage.alt && (
                 <figcaption className="mt-2 text-center text-xs text-zinc-500">
-                  Photo: {article.featuredImage.alt}
+                  {isVideo ? 'Video:' : 'Photo:'} {article.featuredImage.alt}
                 </figcaption>
               )}
             </figure>
           );
         })()}
 
-        {/* Video Embed (if present) */}
-        {article.videoEmbedUrl && (
+        {/* Video Embed (if present and distinct from featured media) */}
+        {article.videoEmbedUrl && article.videoEmbedUrl !== article.featuredImage.url && (
           <VideoEmbed embedUrl={article.videoEmbedUrl} title={`${article.title} - Video Dispatch`} />
         )}
 
@@ -263,8 +279,15 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
                 [&>blockquote]:my-8 [&>blockquote]:border-l-4 [&>blockquote]:border-zinc-950 [&>blockquote]:bg-zinc-50 [&>blockquote]:py-4 [&>blockquote]:px-6 [&>blockquote]:italic [&>blockquote]:text-xl [&>blockquote]:text-zinc-900 [&>blockquote]:rounded-r-sm
                 [&>ul]:my-6 [&>ul]:list-disc [&>ul]:pl-6 [&>ul]:space-y-2
                 [&>ol]:my-6 [&>ol]:list-decimal [&>ol]:pl-6 [&>ol]:space-y-2
-                [&>figure]:my-8 [&>figure>img]:rounded-xs [&>figure>img]:w-full
+                [&>figure]:my-8 [&>figure>img]:rounded-xs [&>figure>img]:w-full [&>figure>img]:h-auto
                 [&>figure>figcaption]:mt-2 [&>figure>figcaption]:text-center [&>figure>figcaption]:text-xs [&>figure>figcaption]:text-zinc-500
+                [&>p>img]:my-6 [&>p>img]:rounded-xs [&>p>img]:max-w-full [&>p>img]:h-auto
+                [&>video]:my-8 [&>video]:w-full [&>video]:aspect-video [&>video]:rounded-xs [&>video]:bg-black [&>video]:shadow-sm
+                [&>figure.wp-block-video]:my-8 [&>figure.wp-block-video]:w-full
+                [&>figure.wp-block-video>video]:w-full [&>figure.wp-block-video>video]:rounded-xs [&>figure.wp-block-video>video]:bg-black [&>figure.wp-block-video>video]:shadow-sm
+                [&>iframe]:my-8 [&>iframe]:w-full [&>iframe]:aspect-video [&>iframe]:rounded-xs [&>iframe]:bg-black
+                [&>figure.wp-block-embed]:my-8 [&>figure.wp-block-embed]:w-full
+                [&_.wp-block-embed__wrapper]:relative [&_.wp-block-embed__wrapper]:aspect-video [&_.wp-block-embed__wrapper>iframe]:absolute [&_.wp-block-embed__wrapper>iframe]:inset-0 [&_.wp-block-embed__wrapper>iframe]:h-full [&_.wp-block-embed__wrapper>iframe]:w-full [&_.wp-block-embed__wrapper>iframe]:rounded-xs
                 [&>a]:text-zinc-950 [&>a]:underline [&>a]:decoration-zinc-400 [&>a]:underline-offset-4 hover:[&>a]:decoration-zinc-950"
               dangerouslySetInnerHTML={{ __html: article.contentHtml }}
             />
@@ -354,6 +377,7 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
                             src={rel.featuredImage.url}
                             alt={rel.featuredImage.alt || rel.title}
                             fill
+                            unoptimized={isGifImage(rel.featuredImage.url)}
                             sizes="80px"
                             className="object-cover transition-transform duration-300 group-hover:scale-105"
                           />

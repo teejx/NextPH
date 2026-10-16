@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 import { Article } from '../lib/wordpress/types';
+import { isGifImage, isVideoMedia } from '../lib/media';
 
 interface StoryCardProps {
   article: Article;
@@ -17,6 +18,9 @@ export const StoryCard: React.FC<StoryCardProps> = ({
   rankIndex,
   priorityImage = false,
 }) => {
+  const isGif = isGifImage(article.featuredImage.url);
+  const hasVideo = Boolean(article.videoEmbedUrl || isVideoMedia(article.featuredImage.url));
+
   const formattedDate = new Date(article.publishedAt).toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
@@ -27,16 +31,27 @@ export const StoryCard: React.FC<StoryCardProps> = ({
   if (variant === 'hero') {
     return (
       <article className="group relative grid grid-cols-1 lg:grid-cols-12 gap-8 items-center border-b border-zinc-200 pb-10">
-        <div className="lg:col-span-7 overflow-hidden rounded-xs bg-zinc-100">
+        <div className="lg:col-span-7 overflow-hidden rounded-xs bg-zinc-100 relative">
           <Link href={`/story/${article.slug}`} className="block relative aspect-16/10 w-full overflow-hidden">
             <Image
               src={article.featuredImage.url}
               alt={article.featuredImage.alt || article.title}
               fill
               priority={priorityImage}
+              unoptimized={isGif}
               sizes="(max-width: 1024px) 100vw, 60vw"
               className="object-cover transition-transform duration-700 ease-out group-hover:scale-103"
             />
+            {hasVideo && (
+              <span className="absolute top-3 right-3 z-10 rounded-full bg-zinc-950/85 backdrop-blur-xs px-2.5 py-0.5 text-[9px] font-black uppercase tracking-wider text-white shadow-xs">
+                VIDEO
+              </span>
+            )}
+            {!hasVideo && isGif && (
+              <span className="absolute top-3 right-3 z-10 rounded-full bg-zinc-950/85 backdrop-blur-xs px-2.5 py-0.5 text-[9px] font-black uppercase tracking-wider text-white shadow-xs">
+                GIF
+              </span>
+            )}
           </Link>
         </div>
         <div className="lg:col-span-5 flex flex-col justify-center">
@@ -113,6 +128,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({
             src={article.featuredImage.url}
             alt={article.featuredImage.alt || article.title}
             fill
+            unoptimized={isGif}
             sizes="80px"
             className="object-cover transition-transform group-hover:scale-105"
           />
@@ -141,9 +157,20 @@ export const StoryCard: React.FC<StoryCardProps> = ({
           src={article.featuredImage.url}
           alt={article.featuredImage.alt || article.title}
           fill
+          unoptimized={isGif}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           className="object-cover transition-transform duration-700 ease-out group-hover:scale-103"
         />
+        {hasVideo && (
+          <span className="absolute top-2.5 right-2.5 z-10 rounded-full bg-zinc-950/85 backdrop-blur-xs px-2 py-0.5 text-[9px] font-black uppercase tracking-wider text-white shadow-xs">
+            VIDEO
+          </span>
+        )}
+        {!hasVideo && isGif && (
+          <span className="absolute top-2.5 right-2.5 z-10 rounded-full bg-zinc-950/85 backdrop-blur-xs px-2 py-0.5 text-[9px] font-black uppercase tracking-wider text-white shadow-xs">
+            GIF
+          </span>
+        )}
       </Link>
       <div className="flex flex-col grow p-5">
         <div className="flex items-center justify-between text-xs">

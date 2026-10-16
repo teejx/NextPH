@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { sanitizeHtml, sanitizeVideoEmbedUrl, transformWPPost } from '../lib/wordpress/client';
+import { isGifImage, isVideoMedia } from '../lib/media';
 import { WPPostRaw } from '../lib/wordpress/types';
 
 describe('WordPress Client Data Utilities', () => {
@@ -42,6 +43,12 @@ describe('WordPress Client Data Utilities', () => {
       const untrusted = 'https://sketchy-site.example/video.mp4';
       const embed = sanitizeVideoEmbedUrl(untrusted);
       expect(embed).toBeNull();
+    });
+
+    it('accepts trusted direct video files from CMS or local host', () => {
+      const trusted = 'https://whatsnextph.local/wp-content/uploads/2026/10/demo.mp4';
+      const embed = sanitizeVideoEmbedUrl(trusted);
+      expect(embed).toBe(trusted);
     });
   });
 
@@ -122,6 +129,22 @@ describe('WordPress Client Data Utilities', () => {
       expect(article.author.name).toBe('Maria Santos');
       expect(article.isFeatured).toBe(true);
       expect(article.isTrending).toBe(true);
+    });
+  });
+
+  describe('Media Detection Utilities', () => {
+    it('accurately detects animated GIF media URLs', () => {
+      expect(isGifImage('https://whatsnextph.local/uploads/animation.gif')).toBe(true);
+      expect(isGifImage('https://whatsnextph.local/uploads/animation.GIF?v=2')).toBe(true);
+      expect(isGifImage('https://whatsnextph.local/uploads/photo.jpg')).toBe(false);
+      expect(isGifImage(null)).toBe(false);
+    });
+
+    it('accurately detects HTML5 video file URLs', () => {
+      expect(isVideoMedia('https://whatsnextph.local/uploads/clip.mp4')).toBe(true);
+      expect(isVideoMedia('https://whatsnextph.local/uploads/clip.webm?token=123')).toBe(true);
+      expect(isVideoMedia('https://whatsnextph.local/uploads/photo.png')).toBe(false);
+      expect(isVideoMedia(undefined)).toBe(false);
     });
   });
 });

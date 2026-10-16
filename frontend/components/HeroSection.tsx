@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Article } from '../lib/wordpress/types';
+import { isGifImage, isVideoMedia } from '../lib/media';
 
 interface HeroSectionProps {
   leadStory?: Article;
@@ -99,6 +100,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                           alt={story.featuredImage.alt || story.title}
                           fill
                           priority={idx === 0}
+                          unoptimized={isGifImage(story.featuredImage.url)}
                           sizes="(max-width: 1024px) 100vw, 55vw"
                           className="object-contain object-right pointer-events-none"
                         />
@@ -115,6 +117,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                         alt={story.featuredImage.alt || story.title}
                         fill
                         priority={idx === 0}
+                        unoptimized={isGifImage(story.featuredImage.url)}
                         sizes="(max-width: 1024px) 100vw, 68vw"
                         className="object-cover object-center pointer-events-none"
                       />
@@ -131,9 +134,21 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         {/* Left-side Text Content Column with text drop shadows */}
         <div className="relative z-20 flex flex-col justify-between p-8 sm:p-10 lg:p-12 w-full md:w-[68%] lg:w-[62%] min-h-full pointer-events-none pb-16 sm:pb-20">
           <div className="pointer-events-auto transition-opacity duration-500 ease-out">
-            <span className="text-[11px] font-bold uppercase tracking-widest text-zinc-200 drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)]">
-              {currentStory.category.name}
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] font-bold uppercase tracking-widest text-zinc-200 drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)]">
+                {currentStory.category.name}
+              </span>
+              {Boolean(currentStory.videoEmbedUrl || isVideoMedia(currentStory.featuredImage.url)) && (
+                <span className="rounded-full bg-white/20 backdrop-blur-xs px-2 py-0.5 text-[9px] font-black uppercase tracking-wider text-white drop-shadow-md">
+                  VIDEO
+                </span>
+              )}
+              {!Boolean(currentStory.videoEmbedUrl || isVideoMedia(currentStory.featuredImage.url)) && isGifImage(currentStory.featuredImage.url) && (
+                <span className="rounded-full bg-white/20 backdrop-blur-xs px-2 py-0.5 text-[9px] font-black uppercase tracking-wider text-white drop-shadow-md">
+                  GIF
+                </span>
+              )}
+            </div>
             <h1 className="mt-4 font-sans text-3xl sm:text-4xl lg:text-5xl font-black leading-tight tracking-tight text-white group-hover:text-zinc-200 transition-colors drop-shadow-[0_4px_12px_rgba(0,0,0,0.95)] drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
               <Link href={`/story/${currentStory.slug}`}>
                 {currentStory.title}
@@ -221,9 +236,20 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 src={story.featuredImage.url}
                 alt={story.featuredImage.alt || story.title}
                 fill
+                unoptimized={isGifImage(story.featuredImage.url)}
                 sizes="(max-width: 1024px) 160px, 180px"
                 className="object-cover transition-transform duration-500 group-hover:scale-105"
               />
+              {Boolean(story.videoEmbedUrl || isVideoMedia(story.featuredImage.url)) && (
+                <span className="absolute top-2 right-2 z-10 rounded-full bg-zinc-950/85 backdrop-blur-xs px-2 py-0.5 text-[8px] font-black uppercase tracking-wider text-white">
+                  VIDEO
+                </span>
+              )}
+              {!Boolean(story.videoEmbedUrl || isVideoMedia(story.featuredImage.url)) && isGifImage(story.featuredImage.url) && (
+                <span className="absolute top-2 right-2 z-10 rounded-full bg-zinc-950/85 backdrop-blur-xs px-2 py-0.5 text-[8px] font-black uppercase tracking-wider text-white">
+                  GIF
+                </span>
+              )}
             </Link>
 
             {/* Details */}

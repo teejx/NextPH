@@ -1,5 +1,6 @@
 import React from 'react';
 import { sanitizeVideoEmbedUrl } from '../lib/wordpress/client';
+import { isVideoMedia } from '../lib/media';
 
 interface VideoEmbedProps {
   embedUrl?: string | null;
@@ -9,7 +10,7 @@ interface VideoEmbedProps {
 
 export const VideoEmbed: React.FC<VideoEmbedProps> = ({
   embedUrl,
-  title = 'Embedded Video Story',
+  title = 'Embedded Video Dispatch',
   className = '',
 }) => {
   const safeUrl = sanitizeVideoEmbedUrl(embedUrl);
@@ -18,21 +19,37 @@ export const VideoEmbed: React.FC<VideoEmbedProps> = ({
     return null;
   }
 
+  const isDirectVideo = isVideoMedia(safeUrl);
+
   return (
-    <figure className={`my-8 overflow-hidden rounded-sm border border-[#E8E4DD] bg-black ${className}`}>
-      <div className="relative aspect-video w-full">
-        <iframe
-          src={safeUrl}
-          title={title}
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-          loading="lazy"
-          className="absolute inset-0 h-full w-full border-0"
-        />
+    <figure className={`my-8 overflow-hidden rounded-xs border border-zinc-200 bg-zinc-950 shadow-sm ${className}`}>
+      <div className="relative aspect-video w-full bg-black flex items-center justify-center">
+        {isDirectVideo ? (
+          <video
+            controls
+            playsInline
+            preload="metadata"
+            className="h-full w-full object-contain"
+            title={title}
+          >
+            <source src={safeUrl} />
+            Your browser does not support the video tag.
+          </video>
+        ) : (
+          <iframe
+            src={safeUrl}
+            title={title}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            loading="lazy"
+            className="absolute inset-0 h-full w-full border-0"
+          />
+        )}
       </div>
-      <figcaption className="bg-[#F3EFEA] px-4 py-2 text-center text-xs text-[#76716B]">
-        {title} (Validated Trusted Provider Embed)
+      <figcaption className="bg-zinc-50 border-t border-zinc-200 px-4 py-2.5 text-center text-xs text-zinc-500 font-medium">
+        {title}
       </figcaption>
     </figure>
   );
 };
+

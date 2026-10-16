@@ -1,5 +1,6 @@
 import { Article, PaginatedArticles, WPPostRaw, WPCategory, WPTag } from './types';
 import { SAMPLE_FIXTURES } from './fixtures';
+import { isGifImage, isVideoMedia, isTrustedVideoHost } from '../media';
 
 const WP_API_URL = process.env.WORDPRESS_API_URL || 'https://cms.nextph.example/wp-json';
 
@@ -28,36 +29,75 @@ export function decodeHtmlEntities(str: string): string {
 /**
  * Sanitize untrusted WordPress block HTML on the server.
  * Edge-compatible (Cloudflare Workers & Next.js ISR safe, zero jsdom/filesystem dependency).
- * Allows standard editorial markup and removes script, iframe, inline event handlers, and malicious URIs.
+ * Allows standard editorial markup and videos while removing script, untrusted iframes, inline event handlers, and malicious URIs.
  */
 export function sanitizeHtml(rawHtml: string): string {
   if (!rawHtml) return '';
 
-  // 1. Remove dangerous executable/injection blocks: <script>, <style>, <iframe>, <object>, <embed>
+  // 1. Remove dangerous executable/injection blocks: <script>, <style>, <object>, <embed>
   let clean = rawHtml
     .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
     .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')
-    .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
     .replace(/<object\b[^<]*(?:(?!<\/object>)<[^<]*)*<\/object>/gi, '')
     .replace(/<embed\b[^<]*(?:(?!<\/embed>)<[^<]*)*<\/embed>/gi, '');
 
-  // 2. Remove inline event handlers (onerror=, onclick=, onload=, etc.)
+  // 2. Sanitize <iframe> tags: preserve trusted YouTube and Vimeo video embeds, strip all other untrusted iframes
+  clean = clean.replace(/<iframe\b([^>]*)>(.*?)<\/iframe>/gi, (match, attrs) => {
+    const srcMatch = attrs.match(/src=["']([^"']+)["']/i);
+    if (srcMatch && srcMatch[1]) {
+      const src = srcMatch[1];
+      if (
+        src.startsWith('https://www.youtube.com/embed/') ||
+        src.startsWith('https://www.youtube-nocookie.com/embed/') ||
+        src.startsWith('https://player.vimeo.com/video/')
+      ) {
+        // Safe video embed: enforce lazy loading
+        return `<iframe ${attrs} loading="lazy"></iframe>`;
+      }
+    }
+    return '';
+  });
+
+  // 3. Optimize inline <video> tags: enforce preload="metadata" and playsinline for fast, smooth playback
+  clean = clean.replace(/<video\b([^>]*)>/gi, (match, attrs) => {
+    let updatedAttrs = attrs;
+    if (!/preload=/i.test(updatedAttrs)) {
+      updatedAttrs += ' preload="metadata"';
+    }
+    if (!/playsinline/i.test(updatedAttrs)) {
+      updatedAttrs += ' playsinline';
+    }
+    return `<video ${updatedAttrs.trim()}>`;
+  });
+
+  // 4. Remove inline event handlers (onerror=, onclick=, onload=, etc.)
   clean = clean.replace(/\s+on\w+\s*=\s*(?:'[^']*'|"[^"]*"|[^\s>]+)/gi, '');
 
-  // 3. Remove javascript:, data:, and vbscript: URIs in attributes
+  // 5. Remove javascript:, data:, and vbscript: URIs in attributes
   clean = clean.replace(/(href|src)\s*=\s*['"]\s*(?:javascript|data|vbscript):[^'"]*['"]/gi, '$1="#"');
 
   return clean.trim();
 }
 
 /**
- * Validate and safely transform allowed video embed URLs (YouTube and Vimeo only).
- * Never accepts raw iframe HTML from arbitrary domains.
+ * Validate and safely transform allowed video embed URLs (YouTube, Vimeo, and trusted direct video files).
+ * Rejects untrusted external domains and arbitrary non-video URLs.
  */
 export function sanitizeVideoEmbedUrl(url: string | null | undefined): string | null {
   if (!url) return null;
   try {
-    const parsed = new URL(url);
+    const trimmed = url.trim();
+    if (!trimmed) return null;
+
+    // Check direct video file (.mp4, .webm, .ogg, .mov, .m4v)
+    if (isVideoMedia(trimmed)) {
+      if (isTrustedVideoHost(trimmed)) {
+        return trimmed;
+      }
+      return null;
+    }
+
+    const parsed = new URL(trimmed);
     const host = parsed.hostname.toLowerCase();
 
     // YouTube
@@ -200,12 +240,20 @@ export function transformWPPost(post: WPPostRaw): Article {
     }
   }
 
-  const featuredImgUrl =
-    mediaEmbedded?.source_url ||
-    mediaEmbedded?.media_details?.sizes?.large?.source_url ||
-    mediaEmbedded?.media_details?.sizes?.full?.source_url ||
-    contentImgUrl ||
+  const fallbackImgUrl =
     'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=80';
+
+  // If the media source URL is an animated GIF, always use original source_url
+  // because WordPress PHP GD / image resizing often strips animation frames in thumbnail sizes
+  const isFeaturedGif = isGifImage(mediaEmbedded?.source_url);
+  const featuredImgUrl =
+    (isFeaturedGif
+      ? mediaEmbedded?.source_url || mediaEmbedded?.media_details?.sizes?.full?.source_url
+      : mediaEmbedded?.source_url ||
+        mediaEmbedded?.media_details?.sizes?.large?.source_url ||
+        mediaEmbedded?.media_details?.sizes?.full?.source_url) ||
+    contentImgUrl ||
+    fallbackImgUrl;
 
   const titleClean = decodeHtmlEntities(post.title?.rendered || 'Untitled Dispatch');
   const rawExcerpt = post.excerpt?.rendered?.replace(/<[^>]+>/g, '') || '';
@@ -215,6 +263,28 @@ export function transformWPPost(post: WPPostRaw): Article {
 
   const wordCount = (post.content?.rendered || '').replace(/<[^>]+>/g, '').split(/\s+/).length;
   const readingTime = Math.max(1, Math.round(wordCount / 200));
+
+  // Extract video URL from meta or embedded post content (native <video> or YouTube/Vimeo)
+  let extractedVideoUrl: string | null = null;
+  const rawVideoMeta =
+    (post.meta?._nextph_video_url as string) ||
+    (post.meta?.video_url as string) ||
+    (post.meta?.video as string) ||
+    (post.meta?.video_embed as string);
+
+  if (rawVideoMeta) {
+    extractedVideoUrl = sanitizeVideoEmbedUrl(rawVideoMeta);
+  } else if (post.content?.rendered) {
+    const videoMatch = post.content.rendered.match(/<(?:video|source)[^>]+src=["']([^"']+)["']/i);
+    if (videoMatch && videoMatch[1]) {
+      extractedVideoUrl = sanitizeVideoEmbedUrl(videoMatch[1]);
+    } else {
+      const iframeMatch = post.content.rendered.match(/<iframe[^>]+src=["']([^"']+(?:youtube|youtu\.be|vimeo)[^"']+)["']/i);
+      if (iframeMatch && iframeMatch[1]) {
+        extractedVideoUrl = sanitizeVideoEmbedUrl(iframeMatch[1]);
+      }
+    }
+  }
 
   return {
     id: String(post.id),
@@ -246,7 +316,7 @@ export function transformWPPost(post: WPPostRaw): Article {
     },
     isFeatured: Boolean(post.meta?._nextph_is_featured),
     isTrending: Boolean(post.meta?._nextph_is_trending),
-    videoEmbedUrl: sanitizeVideoEmbedUrl(post.meta?.video_url as string),
+    videoEmbedUrl: extractedVideoUrl,
   };
 }
 

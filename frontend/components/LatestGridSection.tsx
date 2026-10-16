@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { Article } from '../lib/wordpress/types';
+import { isGifImage, isVideoMedia } from '../lib/media';
 
 interface LatestGridSectionProps {
   latestStories: Article[];
@@ -82,6 +83,7 @@ export const LatestGridSection: React.FC<LatestGridSectionProps> = ({
                       src={story.featuredImage.url}
                       alt={story.featuredImage.alt || story.title}
                       fill
+                      unoptimized={isGifImage(story.featuredImage.url)}
                       sizes="72px"
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
                     />
@@ -117,9 +119,20 @@ export const LatestGridSection: React.FC<LatestGridSectionProps> = ({
                 src={spotlightStory.featuredImage.url}
                 alt={spotlightStory.featuredImage.alt || spotlightStory.title}
                 fill
+                unoptimized={isGifImage(spotlightStory.featuredImage.url)}
                 sizes="(max-width: 1024px) 100vw, 33vw"
                 className="object-cover transition-transform duration-700 ease-out group-hover:scale-103"
               />
+              {Boolean(spotlightStory.videoEmbedUrl || isVideoMedia(spotlightStory.featuredImage.url)) && (
+                <span className="absolute top-2.5 right-2.5 z-10 rounded-full bg-zinc-950/85 backdrop-blur-xs px-2 py-0.5 text-[9px] font-black uppercase tracking-wider text-white shadow-xs">
+                  VIDEO
+                </span>
+              )}
+              {!Boolean(spotlightStory.videoEmbedUrl || isVideoMedia(spotlightStory.featuredImage.url)) && isGifImage(spotlightStory.featuredImage.url) && (
+                <span className="absolute top-2.5 right-2.5 z-10 rounded-full bg-zinc-950/85 backdrop-blur-xs px-2 py-0.5 text-[9px] font-black uppercase tracking-wider text-white shadow-xs">
+                  GIF
+                </span>
+              )}
             </Link>
 
             <div className="mt-4">
