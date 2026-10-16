@@ -1,53 +1,67 @@
 import React from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Search } from 'lucide-react';
+import { ArrowLeft, Search, Compass } from 'lucide-react';
+
+const SECTIONS = [
+  { name: 'News', href: '/news' },
+  { name: 'Tech', href: '/tech' },
+  { name: 'Travel', href: '/travel' },
+  { name: 'Lifestyle', href: '/lifestyle' },
+  { name: 'Trending', href: '/trending' },
+];
 
 export default function NotFound() {
   return (
-    <div className="mx-auto max-w-3xl px-4 py-20 text-center sm:px-6 lg:px-8">
-      <span className="font-serif text-6xl sm:text-8xl font-black text-[#C43622]">404</span>
-      <h1 className="mt-4 font-serif text-3xl sm:text-4xl font-bold tracking-tight text-[#141312]">
-        Story or Dispatch Not Found
-      </h1>
-      <p className="mt-4 text-base text-[#4A4642] max-w-lg mx-auto leading-relaxed">
-        The dispatch you are looking for may have been archived, renamed, or relocated. Please verify the URL or explore our primary sections below.
-      </p>
+    <div className="min-h-[70vh] flex items-center justify-center px-4 py-16 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-2xl text-center">
+        {/* Modern 404 Eyebrow / Indicator */}
+        <div className="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-zinc-50 px-3.5 py-1 text-xs font-bold uppercase tracking-widest text-zinc-500 mb-6">
+          <Compass className="h-3.5 w-3.5" />
+          <span>Error 404 • Missing Dispatch</span>
+        </div>
 
-      <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 rounded-sm bg-[#141312] px-6 py-3 text-xs font-semibold text-white transition-colors hover:bg-[#C43622] focus-visible:outline-2 focus-visible:outline-[#C43622]"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          <span>Return to Homepage</span>
-        </Link>
-        <Link
-          href="/search"
-          className="inline-flex items-center gap-2 rounded-sm border border-[#CCC7BD] bg-white px-6 py-3 text-xs font-semibold text-[#141312] transition-colors hover:border-[#141312] hover:text-[#C43622] focus-visible:outline-2 focus-visible:outline-[#C43622]"
-        >
-          <Search className="h-4 w-4 text-[#76716B]" />
-          <span>Search the Archive</span>
-        </Link>
-      </div>
+        <h1 className="font-sans text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-zinc-950">
+          Story Not Found
+        </h1>
 
-      <div className="mt-12 border-t border-[#CCC7BD] pt-8">
-        <h2 className="text-xs font-bold uppercase tracking-widest text-[#76716B]">Explore Top Sections</h2>
-        <div className="mt-4 flex flex-wrap justify-center gap-3">
-          <Link href="/tech" className="text-xs font-semibold uppercase hover:text-[#C43622]">
-            Tech
+        <p className="mt-4 text-base sm:text-lg text-zinc-600 max-w-md mx-auto leading-relaxed">
+          The dispatch you are looking for may have been archived, moved, or is temporarily unavailable.
+        </p>
+
+        {/* Action Buttons */}
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 rounded-full bg-zinc-950 px-6 py-3 text-xs font-bold uppercase tracking-wider text-white transition-all hover:bg-zinc-800 shadow-sm hover:shadow"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            <span>Return to Homepage</span>
           </Link>
-          <span className="text-[#CCC7BD]">•</span>
-          <Link href="/travel" className="text-xs font-semibold uppercase hover:text-[#C43622]">
-            Travel
+          <Link
+            href="/search"
+            className="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white px-6 py-3 text-xs font-bold uppercase tracking-wider text-zinc-900 transition-all hover:border-zinc-950 hover:bg-zinc-50"
+          >
+            <Search className="h-4 w-4 text-zinc-500" />
+            <span>Search Archive</span>
           </Link>
-          <span className="text-[#CCC7BD]">•</span>
-          <Link href="/lifestyle" className="text-xs font-semibold uppercase hover:text-[#C43622]">
-            Lifestyle
-          </Link>
-          <span className="text-[#CCC7BD]">•</span>
-          <Link href="/trending" className="text-xs font-semibold uppercase hover:text-[#C43622]">
-            Trending
-          </Link>
+        </div>
+
+        {/* Primary Editorial Sections */}
+        <div className="mt-14 border-t border-zinc-200 pt-8">
+          <h2 className="text-[11px] font-bold uppercase tracking-widest text-zinc-400">
+            Explore Editorial Sections
+          </h2>
+          <div className="mt-4 flex flex-wrap justify-center gap-2">
+            {SECTIONS.map((section) => (
+              <Link
+                key={section.name}
+                href={section.href}
+                className="rounded-full border border-zinc-200 bg-white px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-zinc-800 transition-colors hover:border-zinc-950 hover:bg-zinc-950 hover:text-white"
+              >
+                {section.name}
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
     </div>

@@ -156,55 +156,12 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
           <h1 className="mt-3 font-sans text-3xl sm:text-4xl lg:text-5xl font-black leading-tight tracking-tight text-zinc-950">
             {article.title}
           </h1>
-
-          {article.excerpt && (
-            <p className="mt-4 text-lg sm:text-xl text-zinc-600 leading-relaxed font-normal">
-              {article.excerpt}
-            </p>
-          )}
-
-          {/* Author Byline */}
-          <div className="mt-6 flex flex-wrap items-center gap-4 text-xs text-zinc-600 pt-6 border-t border-zinc-100">
-            <div className="flex items-center gap-2.5">
-              {article.author.avatarUrl ? (
-                <div className="relative h-9 w-9 overflow-hidden rounded-full bg-zinc-200 border border-zinc-200">
-                  <Image
-                    src={article.author.avatarUrl}
-                    alt={article.author.name}
-                    fill
-                    sizes="36px"
-                    className="object-cover"
-                  />
-                </div>
-              ) : (
-                <div className="h-9 w-9 rounded-full bg-zinc-900 text-white flex items-center justify-center font-bold text-xs uppercase">
-                  {article.author.name.charAt(0)}
-                </div>
-              )}
-              <div>
-                <span className="font-bold text-zinc-950 block">{article.author.name}</span>
-                <span className="text-zinc-500 text-[11px]">Staff Correspondent</span>
-              </div>
-            </div>
-            <span className="text-zinc-300 hidden sm:inline">•</span>
-            <div className="flex items-center gap-2 text-zinc-500">
-              <time dateTime={article.publishedAt}>
-                {new Date(article.publishedAt).toLocaleDateString('en-US', {
-                  month: 'short',
-                  day: 'numeric',
-                  year: 'numeric',
-                })}
-              </time>
-              <span>•</span>
-              <span>{article.readingTimeMinutes} min read</span>
-            </div>
-          </div>
         </header>
 
         {/* Top Ad Slot (disabled by default) */}
         <AdSlot placement="leaderboard" />
 
-        {/* Hero Featured Media - Maximized full container width */}
+        {/* Hero Featured Media - Render only if landscape/horizontal (if portrait, treated strictly as card thumbnail) */}
         {(() => {
           const isVideo = isVideoMedia(article.featuredImage.url);
           const isGif = isGifImage(article.featuredImage.url);
@@ -213,15 +170,14 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
               ? article.featuredImage.height > article.featuredImage.width * 1.05
               : false;
 
+          // If portrait photo, omit from story page per user instruction (treated strictly as card/feed thumbnail)
+          if (isPortrait && !isVideo) {
+            return null;
+          }
+
           return (
-            <figure className={`my-8 w-full ${isPortrait ? 'flex flex-col items-center' : 'w-full max-w-7xl'}`}>
-              <div
-                className={`relative overflow-hidden rounded-xs border border-zinc-200 bg-zinc-950 ${
-                  isPortrait
-                    ? 'w-full max-w-lg aspect-3/4 sm:aspect-2/3 shadow-xl ring-1 ring-zinc-900/5'
-                    : 'w-full aspect-16/10 sm:aspect-16/9 lg:aspect-21/10 shadow-sm'
-                }`}
-              >
+            <figure className="my-8 w-full max-w-7xl">
+              <div className="relative overflow-hidden rounded-xs border border-zinc-200 bg-zinc-950 w-full aspect-16/10 sm:aspect-16/9 lg:aspect-21/10 shadow-sm">
                 {isVideo ? (
                   <video
                     controls
@@ -239,16 +195,11 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
                     fill
                     priority
                     unoptimized={isGif}
-                    sizes={isPortrait ? '(max-width: 768px) 100vw, 512px' : '100vw'}
+                    sizes="100vw"
                     className="object-cover"
                   />
                 )}
               </div>
-              {article.featuredImage.alt && (
-                <figcaption className="mt-2 text-center text-xs text-zinc-500">
-                  {isVideo ? 'Video:' : 'Photo:'} {article.featuredImage.alt}
-                </figcaption>
-              )}
             </figure>
           );
         })()}
@@ -273,7 +224,6 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
             <div
               className="prose prose-zinc max-w-none break-words text-zinc-900
                 [&>p]:my-6 [&>p]:text-[17px] [&>p]:sm:text-[18px] [&>p]:leading-[1.85] [&>p]:text-zinc-800
-                [&>p:first-of-type]:first-letter:float-left [&>p:first-of-type]:first-letter:text-5xl [&>p:first-of-type]:first-letter:font-black [&>p:first-of-type]:first-letter:mr-3 [&>p:first-of-type]:first-letter:leading-none [&>p:first-of-type]:first-letter:text-zinc-950
                 [&>h2]:font-sans [&>h2]:text-2xl [&>h2]:sm:text-3xl [&>h2]:font-black [&>h2]:mt-12 [&>h2]:mb-4 [&>h2]:tracking-tight [&>h2]:text-zinc-950
                 [&>h3]:font-sans [&>h3]:text-xl [&>h3]:sm:text-2xl [&>h3]:font-bold [&>h3]:mt-8 [&>h3]:mb-3 [&>h3]:tracking-tight [&>h3]:text-zinc-900
                 [&>blockquote]:my-8 [&>blockquote]:border-l-4 [&>blockquote]:border-zinc-950 [&>blockquote]:bg-zinc-50 [&>blockquote]:py-4 [&>blockquote]:px-6 [&>blockquote]:italic [&>blockquote]:text-xl [&>blockquote]:text-zinc-900 [&>blockquote]:rounded-r-sm
