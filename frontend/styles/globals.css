@@ -20,9 +20,26 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-:focus-visible {
+:focus-visible:not(input):not(textarea):not(select):not(button) {
   outline: 2px solid #09090B;
   outline-offset: 2px;
+}
+
+input,
+textarea,
+select {
+  border: none;
+  outline: none;
+}
+
+input:focus,
+input:focus-visible,
+textarea:focus,
+textarea:focus-visible,
+button:focus,
+button:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 ::selection {

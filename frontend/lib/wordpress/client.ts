@@ -145,6 +145,31 @@ async function getCategoryIdBySlug(slug: string): Promise<number | null> {
   return null;
 }
 
+const tagIdCache: Record<string, number> = {};
+
+/**
+ * Resolve a tag slug to a WordPress tag ID.
+ */
+async function getTagIdBySlug(slug: string): Promise<number | null> {
+  if (tagIdCache[slug]) return tagIdCache[slug];
+
+  try {
+    const res = await fetchWP(`/wp/v2/tags?slug=${encodeURIComponent(slug)}`, {
+      next: { revalidate: 3600 },
+    });
+    if (res.ok) {
+      const tags: WPTag[] = await res.json();
+      if (tags.length > 0) {
+        tagIdCache[slug] = tags[0].id;
+        return tags[0].id;
+      }
+    }
+  } catch {
+    // ignore
+  }
+  return null;
+}
+
 /**
  * Transform a raw WordPress REST API post into a normalized Article.
  */
@@ -246,6 +271,16 @@ export async function getArticles(options: {
       const categoryId = await getCategoryIdBySlug(categorySlug);
       if (categoryId) {
         params.append('categories', String(categoryId));
+      }
+    }
+
+    if (tagSlug) {
+      const tagId = await getTagIdBySlug(tagSlug);
+      if (tagId) {
+        params.append('tags', String(tagId));
+      } else {
+        // Fallback: search by tag keyword if taxonomy ID is not found
+        params.append('search', tagSlug);
       }
     }
 
@@ -392,6 +427,17 @@ export async function getFeaturedStory(): Promise<Article | null> {
  * Fetch dynamic tags from WordPress for the trending topics strip.
  */
 export async function getTags(limit: number = 10): Promise<WPTag[]> {
+  const editorialDefaults: WPTag[] = [
+    { id: 101, name: 'Tech', slug: 'tech', count: 12, description: '', link: '', taxonomy: 'post_tag' },
+    { id: 102, name: 'Travel', slug: 'travel', count: 9, description: '', link: '', taxonomy: 'post_tag' },
+    { id: 103, name: 'Lifestyle', slug: 'lifestyle', count: 8, description: '', link: '', taxonomy: 'post_tag' },
+    { id: 104, name: 'News', slug: 'news', count: 7, description: '', link: '', taxonomy: 'post_tag' },
+    { id: 105, name: 'Innovation', slug: 'innovation', count: 6, description: '', link: '', taxonomy: 'post_tag' },
+    { id: 106, name: 'Culture', slug: 'culture', count: 5, description: '', link: '', taxonomy: 'post_tag' },
+    { id: 107, name: 'Heritage', slug: 'heritage', count: 4, description: '', link: '', taxonomy: 'post_tag' },
+    { id: 108, name: 'Design', slug: 'design', count: 3, description: '', link: '', taxonomy: 'post_tag' },
+  ];
+
   try {
     const res = await fetchWP(`/wp/v2/tags?per_page=${limit}&orderby=count&order=desc`, {
       next: { revalidate: 300 },
@@ -399,22 +445,14 @@ export async function getTags(limit: number = 10): Promise<WPTag[]> {
     if (res.ok) {
       const tags: WPTag[] = await res.json();
       if (tags && tags.length > 0) {
-        return tags;
+        const existingSlugs = new Set(tags.map((t) => t.slug.toLowerCase()));
+        const merged = [...tags, ...editorialDefaults.filter((d) => !existingSlugs.has(d.slug))];
+        return merged.slice(0, limit);
       }
     }
   } catch {
     // fallback
   }
 
-  // Fallback default topics if no WordPress tags exist yet
-  return [
-    { id: 1, name: 'Fintech', slug: 'fintech', count: 5, description: '', link: '', taxonomy: 'post_tag' },
-    { id: 2, name: 'Batanes', slug: 'batanes', count: 4, description: '', link: '', taxonomy: 'post_tag' },
-    { id: 3, name: 'Ecotourism', slug: 'ecotourism', count: 4, description: '', link: '', taxonomy: 'post_tag' },
-    { id: 4, name: 'Culinary', slug: 'culinary', count: 3, description: '', link: '', taxonomy: 'post_tag' },
-    { id: 5, name: 'Space Science', slug: 'space-science', count: 3, description: '', link: '', taxonomy: 'post_tag' },
-    { id: 6, name: 'Coffee', slug: 'coffee', count: 2, description: '', link: '', taxonomy: 'post_tag' },
-    { id: 7, name: 'Palawan', slug: 'palawan', count: 2, description: '', link: '', taxonomy: 'post_tag' },
-    { id: 8, name: 'Digital Economy', slug: 'digital-economy', count: 2, description: '', link: '', taxonomy: 'post_tag' },
-  ].slice(0, limit);
+  return editorialDefaults.slice(0, limit);
 }

@@ -135,12 +135,22 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
 
         {/* Story Header */}
         <header className="mt-6 border-b border-zinc-200 pb-8 max-w-5xl">
-          <Link
-            href={`/${article.category.slug}`}
-            className="inline-block text-[11px] font-bold uppercase tracking-widest text-zinc-500 hover:text-black transition-colors"
-          >
-            {article.category.name}
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              href={`/${article.category.slug}`}
+              className="inline-block text-[11px] font-bold uppercase tracking-widest text-zinc-500 hover:text-black transition-colors"
+            >
+              {article.category.name}
+            </Link>
+            <span className="text-zinc-300">•</span>
+            <time dateTime={article.publishedAt} className="text-xs text-zinc-500 font-medium">
+              {new Date(article.publishedAt).toLocaleDateString('en-US', {
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric',
+              })}
+            </time>
+          </div>
 
           <h1 className="mt-3 font-sans text-3xl sm:text-4xl lg:text-5xl font-black leading-tight tracking-tight text-zinc-950">
             {article.title}
@@ -156,7 +166,7 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
         {/* Top Ad Slot (disabled by default) */}
         <AdSlot placement="leaderboard" />
 
-        {/* Hero Featured Media */}
+        {/* Hero Featured Media - Maximized full container width */}
         {(() => {
           const isPortrait =
             article.featuredImage.width && article.featuredImage.height
@@ -164,12 +174,12 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
               : false;
 
           return (
-            <figure className={`my-8 ${isPortrait ? 'flex flex-col items-center' : 'w-full max-w-6xl'}`}>
+            <figure className={`my-8 w-full ${isPortrait ? 'flex flex-col items-center' : 'w-full max-w-7xl'}`}>
               <div
                 className={`relative overflow-hidden rounded-xs border border-zinc-200 bg-zinc-100 ${
                   isPortrait
                     ? 'w-full max-w-lg aspect-3/4 sm:aspect-2/3 shadow-xl ring-1 ring-zinc-900/5'
-                    : 'w-full aspect-16/10 sm:aspect-16/9 shadow-xs'
+                    : 'w-full aspect-16/10 sm:aspect-16/9 lg:aspect-21/10 shadow-sm'
                 }`}
               >
                 <Image
@@ -177,8 +187,8 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
                   alt={article.featuredImage.alt || article.title}
                   fill
                   priority
-                  sizes={isPortrait ? '(max-width: 768px) 100vw, 512px' : '(max-width: 1280px) 100vw, 1200px'}
-                  className={`${isPortrait ? 'object-cover' : 'object-contain sm:object-cover'}`}
+                  sizes={isPortrait ? '(max-width: 768px) 100vw, 512px' : '100vw'}
+                  className="object-cover"
                 />
               </div>
               {article.featuredImage.alt && (

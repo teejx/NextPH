@@ -188,7 +188,8 @@ export const Header: React.FC = () => {
                   placeholder="Search posts or categories..."
                   autoComplete="off"
                   spellCheck={false}
-                  className="w-full bg-transparent text-xs sm:text-sm font-medium text-zinc-950 placeholder-zinc-400 border-0 outline-none focus:outline-none focus:ring-0 ring-0 shadow-none"
+                  style={{ border: 'none', outline: 'none', boxShadow: 'none' }}
+                  className="w-full bg-transparent text-xs sm:text-sm font-medium text-zinc-950 placeholder-zinc-400 border-none outline-none focus:outline-none focus-visible:outline-none focus:ring-0 ring-0 shadow-none appearance-none"
                   aria-label="Search posts or categories"
                 />
                 {isSearching ? (

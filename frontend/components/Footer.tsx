@@ -67,28 +67,33 @@ export const Footer: React.FC = () => {
             </h3>
             <ul className="mt-4 space-y-2.5 text-xs">
               <li>
-                <Link href="/tag/fintech" className="text-zinc-400 hover:text-white transition-colors">
-                  #Fintech
+                <Link href="/tag/tech" className="text-zinc-400 hover:text-white transition-colors">
+                  #Tech
                 </Link>
               </li>
               <li>
-                <Link href="/tag/batanes" className="text-zinc-400 hover:text-white transition-colors">
-                  #Batanes
+                <Link href="/tag/travel" className="text-zinc-400 hover:text-white transition-colors">
+                  #Travel
                 </Link>
               </li>
               <li>
-                <Link href="/tag/ecotourism" className="text-zinc-400 hover:text-white transition-colors">
-                  #Ecotourism
+                <Link href="/tag/lifestyle" className="text-zinc-400 hover:text-white transition-colors">
+                  #Lifestyle
                 </Link>
               </li>
               <li>
-                <Link href="/tag/culinary" className="text-zinc-400 hover:text-white transition-colors">
-                  #Culinary
+                <Link href="/tag/news" className="text-zinc-400 hover:text-white transition-colors">
+                  #News
                 </Link>
               </li>
               <li>
-                <Link href="/tag/space-science" className="text-zinc-400 hover:text-white transition-colors">
-                  #SpaceScience
+                <Link href="/tag/tag-test" className="text-zinc-400 hover:text-white transition-colors">
+                  #TagTest
+                </Link>
+              </li>
+              <li>
+                <Link href="/tag/innovation" className="text-zinc-400 hover:text-white transition-colors">
+                  #Innovation
                 </Link>
               </li>
             </ul>

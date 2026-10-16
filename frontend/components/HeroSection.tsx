@@ -83,34 +83,19 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 idx === currentIndex ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none z-0'
               }`}
             >
-              {/* Ambient blurred backdrop: eats the whole space with color/atmosphere */}
+              {/* Single full-height horizontal image with focus on right, exactly matching Image 2 */}
               <div className="absolute inset-0 w-full h-full overflow-hidden">
                 <Image
                   src={story.featuredImage.url}
-                  alt=""
+                  alt={story.featuredImage.alt || story.title}
                   fill
                   priority={idx === 0}
                   sizes="(max-width: 1024px) 100vw, 66vw"
-                  className="object-cover object-center opacity-25 blur-xl pointer-events-none scale-105"
-                  aria-hidden="true"
+                  className="object-cover object-[75%_center] md:object-right pointer-events-none"
                 />
               </div>
 
-              {/* Crisp main foreground image: unzoomed (never cropped/scaled), shows whole image on right */}
-              <div className="absolute inset-0 w-full h-full flex justify-end items-center">
-                <div className="relative w-full md:w-[68%] lg:w-[65%] h-full">
-                  <Image
-                    src={story.featuredImage.url}
-                    alt={story.featuredImage.alt || story.title}
-                    fill
-                    priority={idx === 0}
-                    sizes="(max-width: 768px) 100vw, 55vw"
-                    className="object-contain object-right pointer-events-none"
-                  />
-                </div>
-              </div>
-
-              {/* Smooth directional fade into solid black on the left side */}
+              {/* Smooth directional fade into solid black on the left side for stark text readability */}
               <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-[#111113] via-[#111113]/85 via-45% to-transparent pointer-events-none z-10" />
             </Link>
           ))}

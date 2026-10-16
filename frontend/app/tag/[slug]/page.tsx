@@ -4,6 +4,8 @@ import { getArticles } from '../../../lib/wordpress/client';
 import { StoryCard } from '../../../components/StoryCard';
 import { NewsletterSection } from '../../../components/NewsletterSection';
 
+import Link from 'next/link';
+
 interface TagPageProps {
   params: Promise<{
     slug: string;
@@ -17,7 +19,7 @@ export async function generateMetadata({ params }: TagPageProps): Promise<Metada
   const decoded = decodeURIComponent(slug);
   return {
     title: `#${decoded} Stories & Dispatches`,
-    description: `Stories tagged with #${decoded} on NextPH.`,
+    description: `Stories tagged with #${decoded} on WHAT'S NEXT PH.`,
   };
 }
 
@@ -46,7 +48,24 @@ export default async function TagArchivePage({ params }: TagPageProps) {
             ))}
           </div>
         ) : (
-          <div className="py-16 text-center text-zinc-400">No stories found under #{decodedTag}.</div>
+          <div className="py-16 text-center text-zinc-500">
+            <p>No stories found under #{decodedTag}.</p>
+            <div className="mt-4 flex items-center justify-center gap-4">
+              <Link
+                href="/search"
+                className="text-xs font-bold uppercase tracking-wider text-zinc-950 underline underline-offset-4 hover:text-zinc-600"
+              >
+                Search Archive
+              </Link>
+              <span className="text-zinc-300">•</span>
+              <Link
+                href="/"
+                className="text-xs font-bold uppercase tracking-wider text-zinc-950 underline underline-offset-4 hover:text-zinc-600"
+              >
+                Back to Home
+              </Link>
+            </div>
+          </div>
         )}
       </main>
 
