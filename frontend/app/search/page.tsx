@@ -36,6 +36,11 @@ function SearchComponent() {
 
     try {
       const res = await fetch(`/api/search?q=${encodeURIComponent(searchTerm)}`);
+      if (res.status === 429) {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error || 'Search rate limit exceeded. Please wait a moment before searching again.');
+        return;
+      }
       if (!res.ok) {
         throw new Error('Search failed');
       }

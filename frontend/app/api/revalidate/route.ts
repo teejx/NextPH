@@ -1,8 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath, revalidateTag } from 'next/cache';
+import { revalidateRateLimit, getClientIp, rateLimitResponse } from '../../../lib/rate-limit';
 
 export async function POST(req: NextRequest) {
   try {
+    // Rate limit: 10 requests per minute per IP
+    const ip = getClientIp(req);
+    const rl = await revalidateRateLimit(ip);
+    if (!rl.success) {
+      return rateLimitResponse(rl, 'Revalidation rate limit exceeded.');
+    }
+
     const secret = req.headers.get('X-Revalidate-Secret');
     const configuredSecret = process.env.REVALIDATION_SECRET;
 
