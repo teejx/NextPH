@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Cookie, X } from 'lucide-react';
+import { Cookie } from 'lucide-react';
 
 export const CookieBanner: React.FC = () => {
   const [visible, setVisible] = useState(false);
@@ -29,11 +29,6 @@ export const CookieBanner: React.FC = () => {
     setVisible(false);
   };
 
-  const handleDismiss = () => {
-    localStorage.setItem('nextph_cookie_consent', 'dismissed');
-    setVisible(false);
-  };
-
   if (!visible) return null;
 
   return (
@@ -41,29 +36,18 @@ export const CookieBanner: React.FC = () => {
       aria-label="Cookie consent banner"
       className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:max-w-md z-40 rounded-xs border border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md p-5 shadow-2xl transition-all duration-300 animate-in slide-in-from-bottom-4 fade-in"
     >
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-7 w-7 items-center justify-center rounded-xs bg-zinc-100 dark:bg-zinc-800 text-zinc-950 dark:text-zinc-50 shrink-0">
-            <Cookie className="h-4 w-4" />
-          </div>
-          <div>
-            <h3 className="font-sans text-xs font-black uppercase tracking-wider text-zinc-950 dark:text-zinc-50">
-              Editorial Privacy & Cookies
-            </h3>
-            <span className="text-[10px] text-zinc-400 dark:text-zinc-500 font-medium">
-              Data Dignity & Minimum Tracking
-            </span>
-          </div>
+      <div className="flex items-center gap-2.5">
+        <div className="flex h-7 w-7 items-center justify-center rounded-xs bg-zinc-100 dark:bg-zinc-800 text-zinc-950 dark:text-zinc-50 shrink-0">
+          <Cookie className="h-4 w-4" />
         </div>
-
-        <button
-          type="button"
-          onClick={handleDismiss}
-          className="rounded-full p-1 text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
-          aria-label="Dismiss cookie notice"
-        >
-          <X className="h-4 w-4" />
-        </button>
+        <div>
+          <h3 className="font-sans text-xs font-black uppercase tracking-wider text-zinc-950 dark:text-zinc-50">
+            Editorial Privacy & Cookies
+          </h3>
+          <span className="text-[10px] text-zinc-400 dark:text-zinc-500 font-medium">
+            Data Dignity & Minimum Tracking
+          </span>
+        </div>
       </div>
 
       <p className="mt-3 text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
