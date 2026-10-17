@@ -17,8 +17,8 @@ export const HeroSkeleton: React.FC<HeroSkeletonProps> = ({ className = '' }) =>
           <div className="h-3.5 w-24 rounded-full bg-zinc-800" />
           {/* Headline */}
           <div className="space-y-2.5">
-            <div className="h-7 sm:h-9 w-full rounded-xs bg-zinc-800" />
-            <div className="h-7 sm:h-9 w-3/4 rounded-xs bg-zinc-800" />
+            <div className="h-5 sm:h-6 w-full rounded-xs bg-zinc-800" />
+            <div className="h-5 sm:h-6 w-3/4 rounded-xs bg-zinc-800" />
           </div>
           {/* Excerpt */}
           <div className="space-y-2 pt-1">

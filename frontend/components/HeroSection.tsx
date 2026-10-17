@@ -144,7 +144,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 </span>
               )}
             </div>
-            <h1 className="mt-4 font-sans text-3xl sm:text-4xl lg:text-5xl font-black leading-tight tracking-tight text-white group-hover:text-zinc-200 transition-colors drop-shadow-[0_4px_12px_rgba(0,0,0,0.95)] drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
+            <h1 className="mt-3 font-sans text-xl sm:text-2xl lg:text-3xl font-black leading-snug tracking-tight text-white group-hover:text-zinc-200 transition-colors drop-shadow-[0_4px_12px_rgba(0,0,0,0.95)] drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
               <Link href={`/story/${currentStory.slug}`}>
                 {currentStory.title}
               </Link>
