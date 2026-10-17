@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { Mail, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { PrivacyPolicyModal } from './PrivacyPolicyModal';
 
 export const NewsletterSection: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -10,6 +11,7 @@ export const NewsletterSection: React.FC = () => {
   const [honeypot, setHoneypot] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [feedbackMessage, setFeedbackMessage] = useState('');
+  const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -137,9 +139,13 @@ export const NewsletterSection: React.FC = () => {
               />
               <label htmlFor="newsletter-consent" className="text-xs text-zinc-500 dark:text-zinc-400">
                 I consent to receive weekly editorial newsletters from WHAT&apos;S NEXT PH. Unsubscribe at any time. Read our{' '}
-                <Link href="/privacy-policy" className="underline text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-zinc-100">
+                <button
+                  type="button"
+                  onClick={() => setIsPrivacyModalOpen(true)}
+                  className="underline font-semibold text-zinc-900 dark:text-zinc-200 hover:text-black dark:hover:text-white cursor-pointer inline transition-colors"
+                >
                   Privacy Policy
-                </Link>
+                </button>
                 .
               </label>
             </div>
@@ -153,6 +159,19 @@ export const NewsletterSection: React.FC = () => {
           </form>
         )}
       </div>
+
+      {/* Privacy Policy Modal with Scroll-to-Accept Enforcement */}
+      <PrivacyPolicyModal
+        isOpen={isPrivacyModalOpen}
+        onClose={() => setIsPrivacyModalOpen(false)}
+        onAccept={() => {
+          setConsent(true);
+          if (status === 'error' && feedbackMessage.includes('privacy')) {
+            setStatus('idle');
+            setFeedbackMessage('');
+          }
+        }}
+      />
     </section>
   );
 };
