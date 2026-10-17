@@ -1,5 +1,10 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { NextRequest } from 'next/server';
+
+vi.mock('next/cache', () => ({
+  revalidateTag: vi.fn(),
+  revalidatePath: vi.fn(),
+}));
 
 // We test the in-memory rate limiter directly since Upstash env vars are not
 // set in the test environment, causing the factory to use the memory fallback.
@@ -68,6 +73,55 @@ describe('Rate Limiting — IP Extraction', () => {
       },
     });
     expect(getClientIp(req)).toBe('203.0.113.99');
+  });
+
+  it('rejects spoofed or malformed IPs and falls back to a valid IP or 127.0.0.1', () => {
+    // Malicious injection attempt in cf-connecting-ip falls back to x-forwarded-for if valid
+    const reqMalicious = createJsonRequest('http://localhost:3000/api/test', {
+      headers: {
+        'cf-connecting-ip': 'invalid-ip-injection; DROP TABLE',
+        'x-forwarded-for': 'malicious-string, 198.51.100.22',
+      },
+    });
+    expect(getClientIp(reqMalicious)).toBe('198.51.100.22');
+
+    // Entirely garbage headers fallback safely to 127.0.0.1
+    const reqAllGarbage = createJsonRequest('http://localhost:3000/api/test', {
+      headers: {
+        'cf-connecting-ip': '999.999.999.999',
+        'x-real-ip': '<script>alert(1)</script>',
+        'x-forwarded-for': 'garbage1, garbage2',
+      },
+    });
+    expect(getClientIp(reqAllGarbage)).toBe('127.0.0.1');
+  });
+});
+
+describe('Security — Timing-Safe Secret Verification', () => {
+  let timingSafeEqualStr: (a: string | null | undefined, b: string | null | undefined) => boolean;
+
+  beforeEach(async () => {
+    const mod = await import('../lib/rate-limit');
+    timingSafeEqualStr = mod.timingSafeEqualStr;
+  });
+
+  it('returns true for identically matching strings', () => {
+    expect(timingSafeEqualStr('super-secret-key-123', 'super-secret-key-123')).toBe(true);
+  });
+
+  it('returns false for mismatched strings of identical length', () => {
+    expect(timingSafeEqualStr('super-secret-key-123', 'super-secret-key-124')).toBe(false);
+  });
+
+  it('returns false for strings of different lengths without throwing error', () => {
+    expect(timingSafeEqualStr('short', 'much-longer-secret-key')).toBe(false);
+  });
+
+  it('returns false when either or both arguments are empty, null, or undefined', () => {
+    expect(timingSafeEqualStr('', 'secret')).toBe(false);
+    expect(timingSafeEqualStr(null, 'secret')).toBe(false);
+    expect(timingSafeEqualStr(undefined, 'secret')).toBe(false);
+    expect(timingSafeEqualStr(undefined, undefined)).toBe(false);
   });
 });
 
@@ -150,4 +204,66 @@ describe('Rate Limiting — Search Endpoint (In-Memory)', () => {
     const body = await blockedRes.json();
     expect(body.error).toContain('rate limit');
   });
+
+  it('includes public edge Cache-Control headers on successful search responses', async () => {
+    const { GET } = await import('../app/api/search/route');
+
+    const req = createJsonRequest('http://localhost:3000/api/search?q=technology', {
+      headers: { 'x-forwarded-for': '10.77.77.2' },
+    });
+    const res = await GET(req);
+    expect(res.status).toBe(200);
+    const cacheHeader = res.headers.get('Cache-Control');
+    expect(cacheHeader).toContain('s-maxage=60');
+    expect(cacheHeader).toContain('stale-while-revalidate=300');
+  });
 });
+
+describe('Security & Rate Limiting — Revalidation Webhook', () => {
+  it('rejects unauthorized requests with 401 when secret does not match', async () => {
+    const originalSecret = process.env.REVALIDATION_SECRET;
+    process.env.REVALIDATION_SECRET = 'valid-revalidate-secret-2026';
+
+    const { POST } = await import('../app/api/revalidate/route');
+
+    const req = createJsonRequest('http://localhost:3000/api/revalidate', {
+      method: 'POST',
+      headers: {
+        'x-forwarded-for': '10.66.66.1',
+        'X-Revalidate-Secret': 'wrong-guessed-secret',
+      },
+      body: { slug: 'test-article' },
+    });
+
+    const res = await POST(req);
+    expect(res.status).toBe(401);
+    const body = await res.json();
+    expect(body.error).toContain('Unauthorized');
+
+    process.env.REVALIDATION_SECRET = originalSecret;
+  });
+
+  it('accepts revalidation requests when secret matches exactly', async () => {
+    const originalSecret = process.env.REVALIDATION_SECRET;
+    process.env.REVALIDATION_SECRET = 'valid-revalidate-secret-2026';
+
+    const { POST } = await import('../app/api/revalidate/route');
+
+    const req = createJsonRequest('http://localhost:3000/api/revalidate', {
+      method: 'POST',
+      headers: {
+        'x-forwarded-for': '10.66.66.2',
+        'X-Revalidate-Secret': 'valid-revalidate-secret-2026',
+      },
+      body: { slug: 'test-article' },
+    });
+
+    const res = await POST(req);
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.revalidated).toBe(true);
+
+    process.env.REVALIDATION_SECRET = originalSecret;
+  });
+});
+

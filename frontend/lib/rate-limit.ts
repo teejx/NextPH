@@ -1,7 +1,8 @@
 import { NextRequest } from 'next/server';
+import crypto from 'crypto';
 
 // ---------------------------------------------------------------------------
-// Rate Limiting — Dual Engine (Upstash Redis · In-Memory Fallback)
+// Rate Limiting & Security — Dual Engine (Upstash Redis · In-Memory Fallback)
 // ---------------------------------------------------------------------------
 //
 // Production:  Uses @upstash/ratelimit with a sliding-window algorithm backed
@@ -30,25 +31,65 @@ interface RateLimitConfig {
   windowSeconds: number;
 }
 
-// ── IP Extraction ───────────────────────────────────────────────────────────
+// ── Timing-Safe Comparison ──────────────────────────────────────────────────
+
+/**
+ * Perform a constant-time string comparison to protect against side-channel
+ * timing attacks on webhook secrets or authorization tokens.
+ * Hashes inputs with SHA-256 first so buffer lengths always match (32 bytes).
+ */
+export function timingSafeEqualStr(a: string | null | undefined, b: string | null | undefined): boolean {
+  if (!a || !b || typeof a !== 'string' || typeof b !== 'string') {
+    return false;
+  }
+  const hashA = crypto.createHash('sha256').update(Buffer.from(a, 'utf8')).digest();
+  const hashB = crypto.createHash('sha256').update(Buffer.from(b, 'utf8')).digest();
+  return crypto.timingSafeEqual(hashA, hashB);
+}
+
+// ── IP Validation & Safe Extraction ─────────────────────────────────────────
+
+// Strict IPv4 & IPv6 pattern matching to reject malformed or injected header strings
+const IPV4_REGEX = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+const IPV6_REGEX = /^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$|^(([0-9a-fA-F]{1,4}:){0,6}[0-9a-fA-F]{1,4})?::(([0-9a-fA-F]{1,4}:){0,6}[0-9a-fA-F]{1,4})?$/;
+
+/**
+ * Validate that a candidate string is a well-formed IPv4 or IPv6 address.
+ */
+export function isValidIp(ip: string): boolean {
+  return IPV4_REGEX.test(ip) || IPV6_REGEX.test(ip);
+}
 
 /**
  * Safely extract the client IP from the request.
- * Checks standard proxy/CDN headers in priority order.
+ * Prioritises Cloudflare's authenticated CF-Connecting-IP header, followed by
+ * trusted proxy headers, with strict format validation to prevent spoofing.
  */
 export function getClientIp(req: NextRequest): string {
-  // Cloudflare
+  // 1. Cloudflare: cf-connecting-ip is set and overwritten by Cloudflare edge
   const cfIp = req.headers.get('cf-connecting-ip');
-  if (cfIp) return cfIp.trim();
+  if (cfIp && isValidIp(cfIp.trim())) {
+    return cfIp.trim();
+  }
 
-  // Vercel / generic reverse proxy
-  const forwarded = req.headers.get('x-forwarded-for');
-  if (forwarded) return forwarded.split(',')[0].trim();
-
+  // 2. Standard reverse proxy real-ip header
   const realIp = req.headers.get('x-real-ip');
-  if (realIp) return realIp.trim();
+  if (realIp && isValidIp(realIp.trim())) {
+    return realIp.trim();
+  }
 
-  // Fallback — should not be relied on in production behind a proxy
+  // 3. x-forwarded-for: parse and validate IPs in chain
+  const forwarded = req.headers.get('x-forwarded-for');
+  if (forwarded) {
+    const ips = forwarded.split(',').map((s) => s.trim());
+    // Find the first valid IP from the proxy chain
+    const validCandidate = ips.find((candidate) => isValidIp(candidate));
+    if (validCandidate) {
+      return validCandidate;
+    }
+  }
+
+  // 4. Fallback default
   return '127.0.0.1';
 }
 

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath, revalidateTag } from 'next/cache';
-import { revalidateRateLimit, getClientIp, rateLimitResponse } from '../../../lib/rate-limit';
+import { revalidateRateLimit, getClientIp, rateLimitResponse, timingSafeEqualStr } from '../../../lib/rate-limit';
 
 export async function POST(req: NextRequest) {
   try {
@@ -14,7 +14,8 @@ export async function POST(req: NextRequest) {
     const secret = req.headers.get('X-Revalidate-Secret');
     const configuredSecret = process.env.REVALIDATION_SECRET;
 
-    if (!configuredSecret || secret !== configuredSecret) {
+    // Timing-safe secret verification to prevent side-channel timing attacks
+    if (!configuredSecret || !timingSafeEqualStr(secret, configuredSecret)) {
       return NextResponse.json({ error: 'Unauthorized webhook request.' }, { status: 401 });
     }
 
