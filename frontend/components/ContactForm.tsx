@@ -1,24 +1,40 @@
 'use client';
 
 import React, { useState } from 'react';
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, Send, Loader2 } from 'lucide-react';
 
 export const ContactForm: React.FC = () => {
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setIsSubmitting(true);
+    setTimeout(() => {
+      setIsSubmitting(false);
+      setSubmitted(true);
+    }, 600);
   };
 
   if (submitted) {
     return (
-      <div className="rounded-sm border border-green-200 bg-white p-6 text-center shadow-xs">
-        <CheckCircle2 className="mx-auto h-8 w-8 text-green-600" />
-        <h4 className="mt-3 font-serif text-lg font-bold text-[#141312]">Message Received</h4>
-        <p className="mt-1 text-xs text-[#4A4642]">
-          Thank you for reaching out to the NextPH editorial desk. We review every pitch and inquiry promptly.
+      <div className="rounded-xs border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60 p-8 text-center shadow-xs animate-in fade-in-50">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400">
+          <CheckCircle2 className="h-6 w-6" />
+        </div>
+        <h4 className="mt-4 font-sans text-lg font-black tracking-tight text-zinc-950 dark:text-zinc-50">
+          Dispatch Received
+        </h4>
+        <p className="mt-2 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed max-w-sm mx-auto">
+          Thank you for reaching out to the WHAT&apos;S NEXT PH editorial desk. Our editors review every tip, pitch, and inquiry with care.
         </p>
+        <button
+          type="button"
+          onClick={() => setSubmitted(false)}
+          className="mt-6 inline-flex text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-100 underline underline-offset-4 hover:text-black dark:hover:text-white transition-colors cursor-pointer"
+        >
+          Send Another Message
+        </button>
       </div>
     );
   }
@@ -26,60 +42,76 @@ export const ContactForm: React.FC = () => {
   return (
     <form className="mt-6 space-y-4 text-sm" onSubmit={handleSubmit}>
       <div>
-        <label htmlFor="contact-name" className="block text-xs font-semibold text-[#141312]">
+        <label htmlFor="contact-name" className="block text-[11px] font-bold uppercase tracking-wider text-zinc-700 dark:text-zinc-300">
           Your Name
         </label>
         <input
           type="text"
           id="contact-name"
           required
-          placeholder="Juan dela Cruz"
-          className="mt-1.5 w-full rounded-sm border border-[#CCC7BD] bg-white px-3.5 py-2.5 text-[#141312] focus:border-[#C43622] focus:outline-hidden"
+          placeholder="e.g. Maria Santos"
+          className="mt-1.5 w-full rounded-xs border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3.5 py-2.5 text-xs sm:text-sm text-zinc-950 dark:text-zinc-50 placeholder-zinc-400 dark:placeholder-zinc-500 transition-colors focus:border-zinc-950 dark:focus:border-zinc-100 focus:outline-none focus:ring-1 focus:ring-zinc-950 dark:focus:ring-zinc-100"
         />
       </div>
+
       <div>
-        <label htmlFor="contact-email" className="block text-xs font-semibold text-[#141312]">
+        <label htmlFor="contact-email" className="block text-[11px] font-bold uppercase tracking-wider text-zinc-700 dark:text-zinc-300">
           Email Address
         </label>
         <input
           type="email"
           id="contact-email"
           required
-          placeholder="juan@example.com"
-          className="mt-1.5 w-full rounded-sm border border-[#CCC7BD] bg-white px-3.5 py-2.5 text-[#141312] focus:border-[#C43622] focus:outline-hidden"
+          placeholder="maria@example.com"
+          className="mt-1.5 w-full rounded-xs border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3.5 py-2.5 text-xs sm:text-sm text-zinc-950 dark:text-zinc-50 placeholder-zinc-400 dark:placeholder-zinc-500 transition-colors focus:border-zinc-950 dark:focus:border-zinc-100 focus:outline-none focus:ring-1 focus:ring-zinc-950 dark:focus:ring-zinc-100"
         />
       </div>
+
       <div>
-        <label htmlFor="contact-subject" className="block text-xs font-semibold text-[#141312]">
-          Subject
+        <label htmlFor="contact-subject" className="block text-[11px] font-bold uppercase tracking-wider text-zinc-700 dark:text-zinc-300">
+          Department / Subject
         </label>
         <select
           id="contact-subject"
-          className="mt-1.5 w-full rounded-sm border border-[#CCC7BD] bg-white px-3.5 py-2.5 text-[#141312] focus:border-[#C43622] focus:outline-hidden"
+          className="mt-1.5 w-full rounded-xs border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3.5 py-2.5 text-xs sm:text-sm text-zinc-950 dark:text-zinc-50 transition-colors focus:border-zinc-950 dark:focus:border-zinc-100 focus:outline-none focus:ring-1 focus:ring-zinc-950 dark:focus:ring-zinc-100"
         >
-          <option>Story Tip / News Lead</option>
+          <option>Story Tip / Confidential Lead</option>
           <option>Freelance Editorial Pitch</option>
-          <option>Correction Request</option>
-          <option>General Feedback</option>
+          <option>Factual Correction Request</option>
+          <option>Press & Media Inquiries</option>
+          <option>General Reader Feedback</option>
         </select>
       </div>
+
       <div>
-        <label htmlFor="contact-message" className="block text-xs font-semibold text-[#141312]">
-          Message
+        <label htmlFor="contact-message" className="block text-[11px] font-bold uppercase tracking-wider text-zinc-700 dark:text-zinc-300">
+          Message & Details
         </label>
         <textarea
           id="contact-message"
           rows={4}
           required
-          placeholder="Describe your pitch or news tip in detail..."
-          className="mt-1.5 w-full rounded-sm border border-[#CCC7BD] bg-white px-3.5 py-2.5 text-[#141312] focus:border-[#C43622] focus:outline-hidden"
+          placeholder="Provide a summary of your pitch, lead, or inquiry..."
+          className="mt-1.5 w-full rounded-xs border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3.5 py-2.5 text-xs sm:text-sm text-zinc-950 dark:text-zinc-50 placeholder-zinc-400 dark:placeholder-zinc-500 transition-colors focus:border-zinc-950 dark:focus:border-zinc-100 focus:outline-none focus:ring-1 focus:ring-zinc-950 dark:focus:ring-zinc-100 leading-relaxed"
         />
       </div>
+
       <button
         type="submit"
-        className="w-full rounded-sm bg-[#141312] py-3 text-xs font-semibold text-white transition-colors hover:bg-[#C43622] focus-visible:outline-2 focus-visible:outline-[#C43622]"
+        disabled={isSubmitting}
+        className="w-full inline-flex items-center justify-center gap-2 rounded-xs bg-zinc-950 dark:bg-zinc-100 py-3 text-xs font-bold uppercase tracking-widest text-white dark:text-zinc-950 transition-colors hover:bg-zinc-800 dark:hover:bg-zinc-200 focus-visible:outline-2 focus-visible:outline-zinc-950 dark:focus-visible:outline-zinc-100 disabled:opacity-50 cursor-pointer"
       >
-        Submit Dispatch
+        {isSubmitting ? (
+          <>
+            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            <span>Sending...</span>
+          </>
+        ) : (
+          <>
+            <span>Submit Dispatch</span>
+            <Send className="h-3.5 w-3.5" />
+          </>
+        )}
       </button>
     </form>
   );

@@ -3,13 +3,14 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { Calendar, Clock, RefreshCw, ChevronRight } from 'lucide-react';
+import { ChevronRight, ShieldCheck } from 'lucide-react';
 import { getArticleBySlug, getArticles } from '../../../lib/wordpress/client';
 import { ShareButtons } from '../../../components/ShareButtons';
 import { VideoEmbed } from '../../../components/VideoEmbed';
 import { StoryCard } from '../../../components/StoryCard';
 import { NewsletterSection } from '../../../components/NewsletterSection';
 import { AdSlot } from '../../../components/AdSlot';
+import { isGifImage } from '../../../lib/media';
 
 interface StoryPageProps {
   params: Promise<{
@@ -17,7 +18,7 @@ interface StoryPageProps {
   }>;
 }
 
-export const revalidate = 120;
+export const revalidate = 300;
 
 export async function generateMetadata({ params }: StoryPageProps): Promise<Metadata> {
   const { slug } = await params;
@@ -79,18 +80,6 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
   });
   const filteredRelated = relatedStories.filter((a) => a.slug !== article.slug).slice(0, 3);
 
-  const formattedPublishDate = new Date(article.publishedAt).toLocaleDateString('en-PH', {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-  });
-
-  const formattedUpdateDate = new Date(article.updatedAt).toLocaleDateString('en-PH', {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-  });
-
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
   const storyUrl = `${siteUrl}/story/${article.slug}`;
 
@@ -111,7 +100,7 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
     ],
     publisher: {
       '@type': 'Organization',
-      name: 'NextPH',
+      name: "WHAT'S NEXT PH",
       logo: {
         '@type': 'ImageObject',
         url: `${siteUrl}/logo.png`,
@@ -131,169 +120,246 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <article className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
+      <article className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
         {/* Breadcrumb Navigation */}
-        <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-[#76716B]">
-          <Link href="/" className="hover:text-[#141312] hover:underline">
+        <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+          <Link href="/" className="hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors">
             Home
           </Link>
-          <ChevronRight className="h-3 w-3 text-[#CCC7BD]" />
-          <Link href={`/${article.category.slug}`} className="hover:text-[#141312] hover:underline">
+          <ChevronRight className="h-3 w-3 text-zinc-300 dark:text-zinc-700" />
+          <Link href={`/${article.category.slug}`} className="hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors">
             {article.category.name}
           </Link>
-          <ChevronRight className="h-3 w-3 text-[#CCC7BD]" />
-          <span className="text-[#141312] font-medium truncate max-w-xs">{article.title}</span>
+          <ChevronRight className="h-3 w-3 text-zinc-300 dark:text-zinc-700" />
+          <span className="text-zinc-700 dark:text-zinc-300 truncate max-w-md">{article.title}</span>
         </nav>
 
         {/* Story Header */}
-        <header className="mt-6 border-b border-[#E8E4DD] pb-8">
-          <Link
-            href={`/${article.category.slug}`}
-            className="inline-block rounded-xs bg-[#FDF1EE] px-2.5 py-1 text-xs font-bold uppercase tracking-wider text-[#C43622]"
-          >
-            {article.category.name}
-          </Link>
+        <header className="mt-6 border-b border-zinc-200 dark:border-zinc-800 pb-8 max-w-4xl">
+          <div className="flex items-center gap-3">
+            <Link
+              href={`/${article.category.slug}`}
+              className="inline-block text-[11px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400 hover:text-black dark:hover:text-white transition-colors"
+            >
+              {article.category.name}
+            </Link>
+            <span className="text-zinc-300 dark:text-zinc-700">•</span>
+            <time dateTime={article.publishedAt} className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">
+              {new Date(article.publishedAt).toLocaleDateString('en-US', {
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric',
+              })}
+            </time>
+          </div>
 
-          <h1 className="mt-4 font-serif text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight tracking-tight text-[#141312]">
+          <h1 className="mt-3 font-sans text-3xl sm:text-4xl lg:text-5xl font-black leading-tight tracking-tight text-zinc-950 dark:text-zinc-50">
             {article.title}
           </h1>
-
-          {article.excerpt && (
-            <p className="mt-4 text-lg sm:text-xl text-[#4A4642] leading-relaxed">
-              {article.excerpt}
-            </p>
-          )}
-
-          {/* Author & Timestamps Metadata Bar */}
-          <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-[#E8E4DD] pt-4 text-xs text-[#76716B]">
-            <div className="flex items-center gap-3">
-              {article.author.avatarUrl && (
-                <div className="relative h-10 w-10 overflow-hidden rounded-full bg-[#E8E4DD]">
-                  <Image
-                    src={article.author.avatarUrl}
-                    alt={article.author.name}
-                    fill
-                    sizes="40px"
-                    className="object-cover"
-                  />
-                </div>
-              )}
-              <div>
-                <span className="block font-semibold text-[#141312]">{article.author.name}</span>
-                <span className="text-[11px] text-[#76716B]">NextPH Staff Reporter</span>
-              </div>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-4">
-              <div className="flex items-center gap-1.5" title="Published date">
-                <Calendar className="h-3.5 w-3.5" />
-                <span>Published {formattedPublishDate}</span>
-              </div>
-
-              {article.updatedAt !== article.publishedAt && (
-                <div className="flex items-center gap-1.5 text-[#4A4642]" title="Last updated date">
-                  <RefreshCw className="h-3 w-3" />
-                  <span>Updated {formattedUpdateDate}</span>
-                </div>
-              )}
-
-              <div className="flex items-center gap-1.5" title="Estimated reading time">
-                <Clock className="h-3.5 w-3.5" />
-                <span>{article.readingTimeMinutes} min read</span>
-              </div>
-            </div>
-          </div>
         </header>
 
         {/* Top Ad Slot (disabled by default) */}
         <AdSlot placement="leaderboard" />
 
-        {/* Hero Featured Media */}
-        <figure className="my-8 overflow-hidden rounded-sm bg-[#F3EFEA]">
-          <div className="relative aspect-16/10 w-full overflow-hidden">
-            <Image
-              src={article.featuredImage.url}
-              alt={article.featuredImage.alt || article.title}
-              fill
-              priority
-              sizes="(max-width: 1024px) 100vw, 896px"
-              className="object-cover"
-            />
-          </div>
-          {article.featuredImage.alt && (
-            <figcaption className="bg-[#F3EFEA] px-4 py-2.5 text-xs text-[#76716B]">
-              Photo: {article.featuredImage.alt}
-            </figcaption>
-          )}
-        </figure>
 
-        {/* Video Embed (if present) */}
-        {article.videoEmbedUrl && (
+        {/* Video Embed (if present and distinct from featured media) */}
+        {article.videoEmbedUrl && article.videoEmbedUrl !== article.featuredImage.url && (
           <VideoEmbed embedUrl={article.videoEmbedUrl} title={`${article.title} - Video Dispatch`} />
         )}
 
-        {/* Article Body Content */}
-        <div
-          className="prose prose-neutral max-w-none text-[#141312] leading-relaxed text-base sm:text-lg
-            [&>p]:my-6 [&>p]:leading-relaxed
-            [&>h2]:font-serif [&>h2]:text-2xl [&>h2]:sm:text-3xl [&>h2]:font-bold [&>h2]:mt-10 [&>h2]:mb-4
-            [&>blockquote]:my-8 [&>blockquote]:border-l-2 [&>blockquote]:border-[#C43622] [&>blockquote]:pl-6 [&>blockquote]:font-serif [&>blockquote]:italic [&>blockquote]:text-xl [&>blockquote]:text-[#4A4642]
-            [&>ul]:my-6 [&>ul]:list-disc [&>ul]:pl-6
-            [&>ol]:my-6 [&>ol]:list-decimal [&>ol]:pl-6
-            [&>figure]:my-8 [&>figure>img]:rounded-sm"
-          dangerouslySetInnerHTML={{ __html: article.contentHtml }}
-        />
-
-        {/* Tags Row */}
-        {article.tags.length > 0 && (
-          <div className="mt-12 border-t border-[#CCC7BD] pt-6">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-[#76716B] mb-3">Related Topics</h3>
-            <div className="flex flex-wrap gap-2">
-              {article.tags.map((tag) => (
-                <Link
-                  key={tag.id}
-                  href={`/tag/${tag.slug}`}
-                  className="rounded-full border border-[#CCC7BD] bg-white px-3.5 py-1 text-xs font-medium text-[#141312] hover:border-[#C43622] hover:text-[#C43622]"
-                >
-                  #{tag.name}
-                </Link>
-              ))}
+        {/* Editorial Main Content Layout (12-Col Grid) */}
+        <div className="mt-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+          {/* Left Rail: Sticky Social Sharing (Desktop) */}
+          <aside className="hidden lg:block lg:col-span-1">
+            <div className="sticky top-28 flex flex-col items-center">
+              <ShareButtons variant="vertical" title={article.title} url={storyUrl} />
             </div>
-          </div>
-        )}
+          </aside>
 
-        {/* Social Sharing Controls */}
-        <div className="mt-8 border-t border-[#E8E4DD] pt-2">
-          <ShareButtons title={article.title} url={storyUrl} />
-        </div>
+          {/* Center Column: Reading Prose Column (Max 740px / 65-75ch optimal measure) */}
+          <div className="lg:col-span-8 max-w-[740px] mx-auto lg:mx-0 w-full">
+            {/* Article Body Content */}
+            <div
+              className="prose prose-zinc dark:prose-invert max-w-none break-words text-zinc-900 dark:text-zinc-100
+                [&>p]:my-6 [&>p]:text-[17px] [&>p]:sm:text-[18px] [&>p]:leading-[1.85] [&>p]:text-zinc-800 dark:[&>p]:text-zinc-200
+                [&>h2]:font-sans [&>h2]:text-2xl [&>h2]:sm:text-3xl [&>h2]:font-black [&>h2]:mt-12 [&>h2]:mb-4 [&>h2]:tracking-tight [&>h2]:text-zinc-950 dark:[&>h2]:text-zinc-50
+                [&>h3]:font-sans [&>h3]:text-xl [&>h3]:sm:text-2xl [&>h3]:font-bold [&>h3]:mt-8 [&>h3]:mb-3 [&>h3]:tracking-tight [&>h3]:text-zinc-900 dark:[&>h3]:text-zinc-100
+                [&>blockquote]:my-8 [&>blockquote]:border-l-4 [&>blockquote]:border-zinc-950 dark:[&>blockquote]:border-zinc-100 [&>blockquote]:bg-zinc-50 dark:[&>blockquote]:bg-zinc-900 [&>blockquote]:py-4 [&>blockquote]:px-6 [&>blockquote]:italic [&>blockquote]:text-xl [&>blockquote]:text-zinc-900 dark:[&>blockquote]:text-zinc-100 [&>blockquote]:rounded-r-sm
+                [&>ul]:my-6 [&>ul]:list-disc [&>ul]:pl-6 [&>ul]:space-y-2
+                [&>ol]:my-6 [&>ol]:list-decimal [&>ol]:pl-6 [&>ol]:space-y-2
+                [&>figure]:my-8 [&>figure>img]:rounded-xs [&>figure>img]:w-full [&>figure>img]:h-auto
+                [&>figure>figcaption]:mt-2 [&>figure>figcaption]:text-center [&>figure>figcaption]:text-xs [&>figure>figcaption]:text-zinc-500 dark:[&>figure>figcaption]:text-zinc-400
+                [&>p>img]:my-6 [&>p>img]:rounded-xs [&>p>img]:max-w-full [&>p>img]:h-auto
+                [&>video]:my-8 [&>video]:w-full [&>video]:aspect-video [&>video]:rounded-xs [&>video]:bg-black [&>video]:shadow-sm
+                [&>figure.wp-block-video]:my-8 [&>figure.wp-block-video]:w-full
+                [&>figure.wp-block-video>video]:w-full [&>figure.wp-block-video>video]:rounded-xs [&>figure.wp-block-video>video]:bg-black [&>figure.wp-block-video>video]:shadow-sm
+                [&>iframe]:my-8 [&>iframe]:w-full [&>iframe]:aspect-video [&>iframe]:rounded-xs [&>iframe]:bg-black
+                [&>figure.wp-block-embed]:my-8 [&>figure.wp-block-embed]:w-full
+                [&_.wp-block-embed__wrapper]:relative [&_.wp-block-embed__wrapper]:aspect-video [&_.wp-block-embed__wrapper>iframe]:absolute [&_.wp-block-embed__wrapper>iframe]:inset-0 [&_.wp-block-embed__wrapper>iframe]:h-full [&_.wp-block-embed__wrapper>iframe]:w-full [&_.wp-block-embed__wrapper>iframe]:rounded-xs
+                [&>a]:text-zinc-950 dark:[&>a]:text-zinc-100 [&>a]:underline [&>a]:decoration-zinc-400 dark:[&>a]:decoration-zinc-600 [&>a]:underline-offset-4 hover:[&>a]:decoration-zinc-950 dark:hover:[&>a]:decoration-zinc-100"
+              dangerouslySetInnerHTML={{ __html: article.contentHtml }}
+            />
 
-        {/* Author Bio Box */}
-        {article.author.bio && (
-          <div className="mt-10 rounded-sm border border-[#CCC7BD] bg-[#F3EFEA] p-6 flex flex-col sm:flex-row items-center sm:items-start gap-4 text-center sm:text-left">
-            {article.author.avatarUrl && (
-              <div className="relative h-16 w-16 overflow-hidden rounded-full bg-[#CCC7BD] shrink-0">
-                <Image
-                  src={article.author.avatarUrl}
-                  alt={article.author.name}
-                  fill
-                  sizes="64px"
-                  className="object-cover"
-                />
+            {/* Tags Row */}
+            {article.tags.length > 0 && (
+              <div className="mt-10 border-t border-zinc-200 dark:border-zinc-800 pt-6">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500 block mb-3">
+                  Related Topics
+                </span>
+                <div className="flex flex-wrap gap-2">
+                  {article.tags.map((tag) => (
+                    <Link
+                      key={tag.id}
+                      href={`/tag/${tag.slug}`}
+                      className="rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3.5 py-1 text-xs font-bold text-zinc-900 dark:text-zinc-100 transition-colors hover:border-zinc-950 dark:hover:border-zinc-300 hover:bg-zinc-950 dark:hover:bg-zinc-100 hover:text-white dark:hover:text-zinc-950"
+                    >
+                      #{tag.name}
+                    </Link>
+                  ))}
+                </div>
               </div>
             )}
-            <div>
-              <h4 className="text-sm font-bold text-[#141312]">About {article.author.name}</h4>
-              <p className="mt-1 text-xs text-[#4A4642] leading-relaxed">{article.author.bio}</p>
+
+            {/* Mobile Share Controls */}
+            <div className="mt-8 border-t border-zinc-200 dark:border-zinc-800 pt-4 lg:hidden">
+              <ShareButtons title={article.title} url={storyUrl} />
+            </div>
+
+            {/* Author Bio Box */}
+            <div className="mt-10 rounded-xs border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60 p-6 flex flex-col sm:flex-row items-center sm:items-start gap-4 text-center sm:text-left">
+              {article.author.avatarUrl ? (
+                <div className="relative h-16 w-16 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800 shrink-0 border border-zinc-200 dark:border-zinc-700">
+                  <Image
+                    src={article.author.avatarUrl}
+                    alt={article.author.name}
+                    fill
+                    sizes="64px"
+                    className="object-cover"
+                  />
+                </div>
+              ) : (
+                <div className="h-16 w-16 rounded-full bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-950 flex items-center justify-center font-bold text-xl uppercase shrink-0">
+                  {article.author.name.charAt(0)}
+                </div>
+              )}
+              <div>
+                <div className="flex items-center justify-center sm:justify-start gap-2">
+                  <h4 className="text-sm font-bold text-zinc-950 dark:text-zinc-50">{article.author.name}</h4>
+                  <span className="rounded-full bg-zinc-200 dark:bg-zinc-800 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-zinc-700 dark:text-zinc-300">
+                    Author
+                  </span>
+                </div>
+                <p className="mt-1.5 text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                  {article.author.bio ||
+                    `${article.author.name} is a contributing writer at WHAT'S NEXT PH covering cutting-edge developments, news, and deep analysis.`}
+                </p>
+              </div>
             </div>
           </div>
-        )}
 
-        {/* Related Stories */}
+          {/* Right Rail: Contextual Editorial Sidebar (Desktop Sticky) */}
+          <aside className="hidden lg:block lg:col-span-3 space-y-8">
+            <div className="sticky top-28 space-y-8">
+              {/* Category Mini Feed */}
+              {filteredRelated.length > 0 && (
+                <div className="rounded-xs border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 shadow-xs">
+                  <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800 mb-4">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">
+                      More in {article.category.name}
+                    </span>
+                    <Link
+                      href={`/${article.category.slug}`}
+                      className="text-[11px] font-bold text-zinc-900 dark:text-zinc-100 hover:underline"
+                    >
+                      View all
+                    </Link>
+                  </div>
+                  <div className="space-y-4">
+                    {filteredRelated.slice(0, 3).map((rel) => (
+                      <article key={rel.id} className="group flex gap-3 items-start">
+                        <Link
+                          href={`/story/${rel.slug}`}
+                          className="relative h-16 w-20 shrink-0 overflow-hidden rounded-xs bg-zinc-100 dark:bg-zinc-800"
+                        >
+                          <Image
+                            src={rel.featuredImage.url}
+                            alt={rel.featuredImage.alt || rel.title}
+                            fill
+                            unoptimized={isGifImage(rel.featuredImage.url)}
+                            sizes="80px"
+                            className="object-cover transition-transform duration-300 group-hover:scale-105"
+                          />
+                        </Link>
+                        <div className="min-w-0 flex-1">
+                          <Link
+                            href={`/story/${rel.slug}`}
+                            className="block text-xs font-bold text-zinc-900 dark:text-zinc-100 leading-snug group-hover:text-zinc-600 dark:group-hover:text-zinc-300 transition-colors line-clamp-2"
+                          >
+                            {rel.title}
+                          </Link>
+                          <time dateTime={rel.publishedAt} className="block mt-1 text-[10px] text-zinc-400 dark:text-zinc-500 font-medium">
+                            {new Date(rel.publishedAt).toLocaleDateString('en-US', {
+                              month: 'short',
+                              day: 'numeric',
+                            })}
+                          </time>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Editorial Trust Badge */}
+              <div className="rounded-xs border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60 p-5 text-xs text-zinc-600 dark:text-zinc-400 space-y-2">
+                <div className="flex items-center gap-2 text-zinc-950 dark:text-zinc-50 font-bold text-xs uppercase tracking-wider">
+                  <ShieldCheck className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                  <span>Editorial Standards</span>
+                </div>
+                <p className="text-[11px] leading-relaxed text-zinc-500 dark:text-zinc-400">
+                  WHAT&apos;S NEXT PH operates under strict fact-checking, independence, and correction standards.
+                </p>
+                <Link
+                  href="/editorial-policy"
+                  className="inline-block text-[11px] font-bold text-zinc-900 dark:text-zinc-100 hover:underline pt-1"
+                >
+                  Read our Editorial Policy &rarr;
+                </Link>
+              </div>
+
+              {/* Newsletter Micro Box */}
+              <div className="rounded-xs border border-zinc-900 dark:border-zinc-800 bg-zinc-950 dark:bg-zinc-900 p-5 text-white">
+                <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-400 block mb-1">
+                  Newsletter
+                </span>
+                <h4 className="font-sans text-sm font-bold leading-tight">
+                  Stay Ahead of What&apos;s Next
+                </h4>
+                <p className="mt-1 text-[11px] text-zinc-400 leading-relaxed">
+                  Get the top dispatches delivered straight to your inbox daily.
+                </p>
+                <Link
+                  href="#newsletter-signup"
+                  className="mt-3 block text-center rounded-xs bg-white dark:bg-zinc-100 py-2 px-3 text-xs font-bold text-zinc-950 transition-colors hover:bg-zinc-200 dark:hover:bg-zinc-300"
+                >
+                  Subscribe Free
+                </Link>
+              </div>
+            </div>
+          </aside>
+        </div>
+
+        {/* Related Stories (Full Width Section) */}
         {filteredRelated.length > 0 && (
-          <section className="mt-16 border-t border-[#CCC7BD] pt-10" aria-labelledby="related-heading">
-            <h2 id="related-heading" className="font-serif text-2xl font-bold tracking-tight text-[#141312] mb-6">
-              More Stories in {article.category.name}
-            </h2>
+          <section className="mt-16 border-t border-zinc-200 dark:border-zinc-800 pt-10" aria-labelledby="related-heading">
+            <div className="mb-6">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">
+                Continue Reading
+              </span>
+              <h2 id="related-heading" className="font-sans text-xl sm:text-2xl font-black text-zinc-950 dark:text-zinc-50 mt-1">
+                More in {article.category.name}
+              </h2>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {filteredRelated.map((related) => (
                 <StoryCard key={related.id} article={related} variant="standard" />
@@ -303,7 +369,9 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
         )}
 
         {/* Newsletter Signup */}
-        <NewsletterSection />
+        <div id="newsletter-signup">
+          <NewsletterSection />
+        </div>
       </article>
     </>
   );

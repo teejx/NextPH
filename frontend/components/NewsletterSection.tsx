@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { Mail, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { PrivacyPolicyModal } from './PrivacyPolicyModal';
 
 export const NewsletterSection: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -10,6 +11,7 @@ export const NewsletterSection: React.FC = () => {
   const [honeypot, setHoneypot] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [feedbackMessage, setFeedbackMessage] = useState('');
+  const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,26 +60,26 @@ export const NewsletterSection: React.FC = () => {
   return (
     <section
       aria-labelledby="newsletter-heading"
-      className="my-16 border-y border-[#CCC7BD] bg-[#F3EFEA] py-12 px-6 sm:px-12 rounded-sm"
+      className="my-16 border-y border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 py-12 px-6 sm:px-12 rounded-xs"
     >
       <div className="mx-auto max-w-3xl text-center">
-        <div className="inline-flex items-center gap-2 rounded-full bg-[#FDF1EE] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[#C43622]">
-          <Mail className="h-3.5 w-3.5" />
+        <div className="inline-flex items-center gap-2 rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3.5 py-1 text-[11px] font-bold uppercase tracking-widest text-zinc-700 dark:text-zinc-300">
+          <Mail className="h-3.5 w-3.5 text-zinc-900 dark:text-zinc-100" />
           The Next Dispatch
         </div>
-        <h2 id="newsletter-heading" className="mt-4 text-2xl sm:text-3xl font-serif font-bold tracking-tight text-[#141312]">
+        <h2 id="newsletter-heading" className="mt-4 text-2xl sm:text-3xl font-sans font-black tracking-tight text-zinc-950 dark:text-zinc-50">
           Curated Filipino stories, delivered with editorial rigor.
         </h2>
-        <p className="mt-3 text-sm sm:text-base text-[#4A4642]">
+        <p className="mt-3 text-sm sm:text-base text-zinc-600 dark:text-zinc-400">
           Join thousands of discerning readers who receive our weekly briefing covering technology breakthroughs, archipelago journeys, and contemporary culture.
         </p>
 
         {status === 'success' ? (
-          <div className="mt-8 flex items-center justify-center gap-3 rounded-md bg-white p-6 border border-green-200 text-left shadow-xs">
-            <CheckCircle2 className="h-6 w-6 text-green-600 shrink-0" />
+          <div className="mt-8 flex items-center justify-center gap-3 rounded-xs bg-white dark:bg-zinc-800 p-6 border border-zinc-200 dark:border-zinc-700 text-left shadow-xs">
+            <CheckCircle2 className="h-6 w-6 text-zinc-950 dark:text-zinc-50 shrink-0" />
             <div>
-              <h3 className="text-sm font-bold text-[#141312]">Subscription Confirmed</h3>
-              <p className="text-xs text-[#4A4642] mt-0.5">{feedbackMessage}</p>
+              <h3 className="text-sm font-bold text-zinc-950 dark:text-zinc-50">Subscription Confirmed</h3>
+              <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-0.5">{feedbackMessage}</p>
             </div>
           </div>
         ) : (
@@ -105,16 +107,16 @@ export const NewsletterSection: React.FC = () => {
                   type="email"
                   id="newsletter-email"
                   required
-                  placeholder="Enter your email (e.g. editor@nextph.ph)"
+                  placeholder="Enter your email (e.g. editor@whatsnextph.ph)"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full rounded-sm border border-[#CCC7BD] bg-white px-4 py-3 text-sm text-[#141312] placeholder-[#76716B] transition-colors focus:border-[#C43622] focus:outline-hidden"
+                  className="w-full rounded-xs border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-4 py-3 text-sm text-zinc-950 dark:text-zinc-50 placeholder-zinc-400 dark:placeholder-zinc-500 transition-colors focus:border-zinc-950 dark:focus:border-zinc-100 focus:ring-2 focus:ring-zinc-950 dark:focus:ring-zinc-100 focus:outline-hidden"
                 />
               </div>
               <button
                 type="submit"
                 disabled={status === 'loading'}
-                className="inline-flex items-center justify-center rounded-sm bg-[#141312] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#C43622] disabled:opacity-50 shrink-0 focus-visible:outline-2 focus-visible:outline-[#C43622]"
+                className="inline-flex items-center justify-center rounded-xs bg-zinc-950 dark:bg-zinc-100 px-6 py-3 text-xs font-bold uppercase tracking-wider text-white dark:text-zinc-950 transition-colors hover:bg-zinc-800 dark:hover:bg-zinc-200 disabled:opacity-50 shrink-0 focus-visible:outline-2 focus-visible:outline-zinc-950 dark:focus-visible:outline-zinc-100 cursor-pointer"
               >
                 {status === 'loading' ? (
                   <>
@@ -133,19 +135,23 @@ export const NewsletterSection: React.FC = () => {
                 id="newsletter-consent"
                 checked={consent}
                 onChange={(e) => setConsent(e.target.checked)}
-                className="mt-1 h-4 w-4 rounded-xs border-[#CCC7BD] text-[#C43622] focus:ring-[#C43622]"
+                className="mt-1 h-4 w-4 rounded-xs border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-950 dark:text-zinc-50 focus:ring-zinc-950 dark:focus:ring-zinc-100"
               />
-              <label htmlFor="newsletter-consent" className="text-xs text-[#76716B]">
-                I consent to receive weekly editorial newsletters from NextPH. Unsubscribe at any time. Read our{' '}
-                <Link href="/privacy-policy" className="underline hover:text-[#141312]">
+              <label htmlFor="newsletter-consent" className="text-xs text-zinc-500 dark:text-zinc-400">
+                I consent to receive weekly editorial newsletters from WHAT&apos;S NEXT PH. Unsubscribe at any time. Read our{' '}
+                <button
+                  type="button"
+                  onClick={() => setIsPrivacyModalOpen(true)}
+                  className="underline font-semibold text-zinc-900 dark:text-zinc-200 hover:text-black dark:hover:text-white cursor-pointer inline transition-colors"
+                >
                   Privacy Policy
-                </Link>
+                </button>
                 .
               </label>
             </div>
 
             {status === 'error' && (
-              <div className="mt-3 flex items-center gap-2 text-xs font-medium text-[#C43622]" role="alert">
+              <div className="mt-3 flex items-center gap-2 text-xs font-medium text-red-600 dark:text-red-400" role="alert">
                 <AlertCircle className="h-4 w-4 shrink-0" />
                 <span>{feedbackMessage}</span>
               </div>
@@ -153,6 +159,19 @@ export const NewsletterSection: React.FC = () => {
           </form>
         )}
       </div>
+
+      {/* Privacy Policy Modal with Scroll-to-Accept Enforcement */}
+      <PrivacyPolicyModal
+        isOpen={isPrivacyModalOpen}
+        onClose={() => setIsPrivacyModalOpen(false)}
+        onAccept={() => {
+          setConsent(true);
+          if (status === 'error' && feedbackMessage.includes('privacy')) {
+            setStatus('idle');
+            setFeedbackMessage('');
+          }
+        }}
+      />
     </section>
   );
 };

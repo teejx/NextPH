@@ -1,21 +1,43 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
+import { revalidateRateLimit, getClientIp, rateLimitResponse, timingSafeEqualStr } from '../../../lib/rate-limit';
 
 export async function POST(req: NextRequest) {
   try {
+    // Rate limit: 10 requests per minute per IP
+    const ip = getClientIp(req);
+    const rl = await revalidateRateLimit(ip);
+    if (!rl.success) {
+      return rateLimitResponse(rl, 'Revalidation rate limit exceeded.');
+    }
+
     const secret = req.headers.get('X-Revalidate-Secret');
     const configuredSecret = process.env.REVALIDATION_SECRET;
 
-    if (!configuredSecret || secret !== configuredSecret) {
+    // Timing-safe secret verification to prevent side-channel timing attacks
+    if (!configuredSecret || !timingSafeEqualStr(secret, configuredSecret)) {
       return NextResponse.json({ error: 'Unauthorized webhook request.' }, { status: 401 });
     }
 
     const payload = await req.json().catch(() => ({}));
-    const { slug } = payload;
+    const { slug, taxonomy } = payload;
+
+    // Invalidate WordPress cached tags
+    revalidateTag('posts');
+    if (taxonomy === 'category' || !taxonomy) {
+      revalidateTag('categories');
+    }
+    if (taxonomy === 'tag' || !taxonomy) {
+      revalidateTag('tags');
+    }
+    if (slug) {
+      revalidateTag(`post-${slug}`);
+    }
 
     // Invalidate homepage, trending, and category listings
     revalidatePath('/');
     revalidatePath('/trending');
+    revalidatePath('/news');
     revalidatePath('/tech');
     revalidatePath('/travel');
     revalidatePath('/lifestyle');

@@ -1,8 +1,11 @@
 import React from 'react';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { AdSlot } from '../components/AdSlot';
 import { ShareButtons } from '../components/ShareButtons';
+import { HeroSection } from '../components/HeroSection';
+import { Article } from '../lib/wordpress/types';
+import { ArticleCardSkeleton, HeroSkeleton, ArticlePageSkeleton } from '../components/skeletons';
 
 describe('Frontend Component Guarantees', () => {
   const originalEnv = process.env;
@@ -38,6 +41,104 @@ describe('Frontend Component Guarantees', () => {
       expect(screen.getByLabelText('Share on X (formerly Twitter)')).toBeInTheDocument();
       expect(screen.getByLabelText('Share on Facebook')).toBeInTheDocument();
       expect(screen.getByLabelText('Share on LinkedIn')).toBeInTheDocument();
+    });
+  });
+
+  describe('HeroSection Carousel Component', () => {
+    const mockStories: Article[] = [
+      {
+        id: '1',
+        slug: 'story-1',
+        title: 'Story 1 Title',
+        excerpt: 'Excerpt 1',
+        contentHtml: '<p>Content</p>',
+        featuredImage: { url: 'https://images.unsplash.com/photo-1?q=80', alt: 'Img 1', width: 1200, height: 800 },
+        category: { id: 1, name: 'Tech', slug: 'tech' },
+        tags: [],
+        author: { id: 1, name: 'Author 1', slug: 'author-1' },
+        publishedAt: '2026-10-15T00:00:00Z',
+        updatedAt: '2026-10-15T00:00:00Z',
+        readingTimeMinutes: 3,
+        isFeatured: true,
+        isTrending: false,
+      },
+      {
+        id: '2',
+        slug: 'story-2',
+        title: 'Story 2 Title',
+        excerpt: 'Excerpt 2',
+        contentHtml: '<p>Content</p>',
+        featuredImage: { url: 'https://images.unsplash.com/photo-2?q=80', alt: 'Img 2', width: 1200, height: 800 },
+        category: { id: 2, name: 'News', slug: 'news' },
+        tags: [],
+        author: { id: 2, name: 'Author 2', slug: 'author-2' },
+        publishedAt: '2026-10-15T00:00:00Z',
+        updatedAt: '2026-10-15T00:00:00Z',
+        readingTimeMinutes: 2,
+        isFeatured: true,
+        isTrending: false,
+      },
+    ];
+
+    const mockSidebar: Article[] = [
+      {
+        id: '3',
+        slug: 'story-3',
+        title: 'Sidebar Story 3',
+        excerpt: 'Sidebar Excerpt',
+        contentHtml: '<p>Content</p>',
+        featuredImage: { url: 'https://images.unsplash.com/photo-3?q=80', alt: 'Img 3', width: 1200, height: 800 },
+        category: { id: 3, name: 'Travel', slug: 'travel' },
+        tags: [],
+        author: { id: 3, name: 'Author 3', slug: 'author-3' },
+        publishedAt: '2026-10-15T00:00:00Z',
+        updatedAt: '2026-10-15T00:00:00Z',
+        readingTimeMinutes: 4,
+        isFeatured: false,
+        isTrending: true,
+      },
+    ];
+
+    it('renders hero carousel and allows switching active slide with controls', () => {
+      render(<HeroSection featuredStories={mockStories} sidebarStories={mockSidebar} />);
+      expect(screen.getByText('Story 1 Title')).toBeInTheDocument();
+      expect(screen.getByText('Sidebar Story 3')).toBeInTheDocument();
+
+      const nextButton = screen.getByLabelText('Next story');
+      fireEvent.click(nextButton);
+
+      expect(screen.getByText('Story 2 Title')).toBeInTheDocument();
+    });
+  });
+
+  describe('Skeleton Components', () => {
+    it('ArticleCardSkeleton renders with aria-hidden="true" and animate-pulse', () => {
+      const { container } = render(<ArticleCardSkeleton />);
+      const article = container.querySelector('article');
+      expect(article).toHaveAttribute('aria-hidden', 'true');
+      expect(article?.className).toContain('animate-pulse');
+    });
+
+    it('ArticleCardSkeleton renders compact layout when compact=true', () => {
+      const { container } = render(<ArticleCardSkeleton compact />);
+      const article = container.querySelector('article');
+      expect(article).toHaveAttribute('aria-hidden', 'true');
+      expect(article?.className).toContain('animate-pulse');
+      expect(container.querySelector('.h-18.w-20')).toBeInTheDocument();
+    });
+
+    it('HeroSkeleton renders with aria-hidden="true" and animate-pulse', () => {
+      const { container } = render(<HeroSkeleton />);
+      const section = container.querySelector('section');
+      expect(section).toHaveAttribute('aria-hidden', 'true');
+      expect(section?.className).toContain('animate-pulse');
+    });
+
+    it('ArticlePageSkeleton renders with aria-hidden="true" and animate-pulse', () => {
+      const { container } = render(<ArticlePageSkeleton />);
+      const article = container.querySelector('article');
+      expect(article).toHaveAttribute('aria-hidden', 'true');
+      expect(article?.className).toContain('animate-pulse');
     });
   });
 });

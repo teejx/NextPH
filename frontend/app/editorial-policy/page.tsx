@@ -1,43 +1,110 @@
 import React from 'react';
 import type { Metadata } from 'next';
+import Link from 'next/link';
+import { CheckCircle2, Shield, Eye, Cpu, ArrowRight } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Editorial Policy & Standards — NextPH',
+  title: "Editorial Policy & Standards — WHAT'S NEXT PH",
   description: 'Our journalistic principles, fact-checking methodology, attribution standards, and ethical independence.',
 };
 
+const PRINCIPLES = [
+  {
+    num: '01',
+    icon: CheckCircle2,
+    title: 'Accuracy & Primary Verification',
+    body: 'Every factual assertion, data point, or quote is verified with primary sources, interview transcripts, official public records, or accredited research publications before publication. When reporting on emerging technology, data claims are independently vetted by subject specialists.',
+  },
+  {
+    num: '02',
+    icon: Shield,
+    title: 'Uncompromised Independence',
+    body: 'Our newsroom operates with total editorial autonomy. Commercial relationships, technology brand access, or advertising arrangements never dictate coverage decisions or tonal rigor. Any sponsored editorial collaboration is unambiguously flagged.',
+  },
+  {
+    num: '03',
+    icon: Eye,
+    title: 'Transparent Editorial Curation',
+    body: 'Unlike legacy aggregators that fabricate trending algorithms to amplify engagement bait, WHAT\'S NEXT PH curation is guided by seasoned editors who evaluate societal consequence, technological depth, and cultural longevity across the archipelago.',
+  },
+  {
+    num: '04',
+    icon: Cpu,
+    title: 'Human Bylines & Synthetic Media Standards',
+    body: 'WHAT\'S NEXT PH does not publish automated, unvetted synthetic news articles. While our engineers utilize AI assistants for transcript cleanup, syntax proofreading, and code formatting, every byline belongs to human writers who take personal responsibility for every sentence.',
+  },
+];
+
 export default function EditorialPolicyPage() {
   return (
-    <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
-      <header className="border-b border-[#CCC7BD] pb-8">
-        <span className="text-xs font-bold uppercase tracking-widest text-[#C43622]">Standards & Integrity</span>
-        <h1 className="mt-2 font-serif text-3xl sm:text-5xl font-bold tracking-tight text-[#141312]">
-          Editorial Policy
+    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      {/* Header */}
+      <header className="border-b border-zinc-200 dark:border-zinc-800 pb-10">
+        <span className="text-[11px] font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">
+          Standards & Integrity
+        </span>
+        <h1 className="mt-3 font-sans text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-zinc-950 dark:text-zinc-50 leading-tight">
+          Editorial Policy & Standards
         </h1>
-        <p className="mt-3 text-sm text-[#76716B]">Our commitment to accuracy, independence, and fairness.</p>
+        <p className="mt-4 text-base sm:text-lg text-zinc-600 dark:text-zinc-400 max-w-3xl leading-relaxed font-light">
+          Our foundational commitment to verified truth, source protection, journalistic independence, and respectful presentation.
+        </p>
       </header>
 
-      <main className="prose prose-neutral mt-8 max-w-none text-[#141312] leading-relaxed text-base sm:text-lg">
-        <h2>1. Accuracy and Verification</h2>
-        <p>
-          NextPH is committed to verified reporting. Every piece of information, data metric, or quote is corroborated with original primary sources, direct interview transcripts, public filings, or accredited scientific publications before release.
-        </p>
+      {/* Principles Grid */}
+      <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8">
+        {PRINCIPLES.map((principle) => {
+          const Icon = principle.icon;
+          return (
+            <div
+              key={principle.title}
+              className="group rounded-xs border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-7 sm:p-9 shadow-xs hover:border-zinc-950 dark:hover:border-zinc-300 transition-colors"
+            >
+              <div className="flex items-center justify-between pb-6 border-b border-zinc-100 dark:border-zinc-800">
+                <span className="font-mono text-xs font-bold text-zinc-400 dark:text-zinc-500 tracking-wider">
+                  {principle.num}
+                </span>
+                <div className="flex h-9 w-9 items-center justify-center rounded-xs bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 group-hover:bg-zinc-950 dark:group-hover:bg-zinc-100 group-hover:text-white dark:group-hover:text-zinc-950 transition-colors">
+                  <Icon className="h-4 w-4" />
+                </div>
+              </div>
+              <h2 className="mt-5 font-sans text-xl font-bold tracking-tight text-zinc-950 dark:text-zinc-50">
+                {principle.title}
+              </h2>
+              <p className="mt-3 text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                {principle.body}
+              </p>
+            </div>
+          );
+        })}
+      </div>
 
-        <h2>2. Editorial Independence</h2>
-        <p>
-          Our editorial desk operates with complete editorial autonomy. Commercial partnerships, sponsorship opportunities, or upcoming product reviews never influence our news judgment or investigative tone. Any sponsored editorial feature in the future will be clearly and unambiguously labeled.
-        </p>
-
-        <h2>3. Transparent Trending Curation</h2>
-        <p>
-          Unlike legacy aggregators that fabricate popularity metrics or amplify clickbait loops, NextPH’s <em>Trending Stories</em> are curated by seasoned editors who assess real-world cultural impact, technology significance, and reader relevance across the Philippine archipelago.
-        </p>
-
-        <h2>4. Use of AI and Synthetic Tools</h2>
-        <p>
-          NextPH does not publish unvetted, auto-generated synthetic news articles. While our engineering team utilizes AI tools for grammar checks, transcription assistance, and code formatting, all editorial bylines belong to human writers and editors who take full responsibility for every published word.
-        </p>
-      </main>
+      {/* Cross-Link Bar */}
+      <div className="mt-12 rounded-xs border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60 p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6">
+        <div>
+          <h3 className="font-sans text-base font-bold text-zinc-950 dark:text-zinc-50">
+            Have a question about our reporting or spotted a factual inaccuracy?
+          </h3>
+          <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+            Read our transparent corrections protocol or contact our accountability desk.
+          </p>
+        </div>
+        <div className="flex items-center gap-3 shrink-0">
+          <Link
+            href="/corrections"
+            className="inline-flex items-center gap-2 rounded-xs bg-zinc-950 dark:bg-zinc-100 px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-white dark:text-zinc-950 hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors"
+          >
+            <span>Corrections Policy</span>
+            <ArrowRight className="h-3 w-3" />
+          </Link>
+          <Link
+            href="/contact"
+            className="inline-flex items-center gap-2 rounded-xs border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-100 hover:border-zinc-950 dark:hover:border-zinc-300 transition-colors"
+          >
+            <span>Contact Desk</span>
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }

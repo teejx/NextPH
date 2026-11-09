@@ -6,9 +6,10 @@ import { Share2, Link as LinkIcon, Check } from 'lucide-react';
 interface ShareButtonsProps {
   title: string;
   url: string;
+  variant?: 'horizontal' | 'vertical';
 }
 
-export const ShareButtons: React.FC<ShareButtonsProps> = ({ title, url }) => {
+export const ShareButtons: React.FC<ShareButtonsProps> = ({ title, url, variant = 'horizontal' }) => {
   const [copied, setCopied] = useState(false);
 
   const handleNativeShare = async () => {
@@ -41,55 +42,128 @@ export const ShareButtons: React.FC<ShareButtonsProps> = ({ title, url }) => {
   const encodedUrl = encodeURIComponent(url);
   const encodedTitle = encodeURIComponent(title);
 
-  return (
-    <div className="flex flex-wrap items-center gap-2 py-4" aria-label="Social sharing options">
-      <span className="text-xs font-semibold uppercase tracking-wider text-[#76716B] mr-2">Share Story:</span>
+  if (variant === 'vertical') {
+    return (
+      <div className="flex flex-col items-center gap-3" aria-label="Social sharing options">
+        <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500 mb-1">
+          Share
+        </span>
 
-      {/* Native Web Share Button */}
-      <button
-        onClick={handleNativeShare}
-        className="inline-flex items-center gap-1.5 rounded-full border border-[#CCC7BD] bg-white px-3 py-1.5 text-xs font-medium text-[#141312] transition-colors hover:border-[#141312] hover:bg-[#FBF9F5] focus-visible:outline-2 focus-visible:outline-[#C43622]"
-        title="Share via device options"
-        aria-label="Share story via system menu"
-      >
-        <Share2 className="h-3.5 w-3.5 text-[#C43622]" />
-        <span>Share</span>
-      </button>
+        {/* Copy Link Button */}
+        <button
+          onClick={handleCopyLink}
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 transition-colors hover:border-zinc-950 dark:hover:border-zinc-300 hover:bg-zinc-950 dark:hover:bg-zinc-100 hover:text-white dark:hover:text-zinc-950 cursor-pointer"
+          title={copied ? 'Link copied!' : 'Copy article link'}
+          aria-label={copied ? 'Story link copied to clipboard' : 'Copy link to story'}
+        >
+          {copied ? (
+            <Check className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+          ) : (
+            <LinkIcon className="h-4 w-4" />
+          )}
+        </button>
+
+        {/* X / Twitter */}
+        <a
+          href={`https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 text-xs font-bold transition-colors hover:border-zinc-950 dark:hover:border-zinc-300 hover:bg-zinc-950 dark:hover:bg-zinc-100 hover:text-white dark:hover:text-zinc-950"
+          aria-label="Share on X (formerly Twitter)"
+          title="Share on X (formerly Twitter)"
+        >
+          𝕏
+        </a>
+
+        {/* Facebook */}
+        <a
+          href={`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 text-xs font-bold transition-colors hover:border-zinc-950 dark:hover:border-zinc-300 hover:bg-zinc-950 dark:hover:bg-zinc-100 hover:text-white dark:hover:text-zinc-950"
+          aria-label="Share on Facebook"
+          title="Share on Facebook"
+        >
+          f
+        </a>
+
+        {/* LinkedIn */}
+        <a
+          href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 text-xs font-bold transition-colors hover:border-zinc-950 dark:hover:border-zinc-300 hover:bg-zinc-950 dark:hover:bg-zinc-100 hover:text-white dark:hover:text-zinc-950"
+          aria-label="Share on LinkedIn"
+          title="Share on LinkedIn"
+        >
+          in
+        </a>
+
+        {/* Native Share */}
+        <button
+          onClick={handleNativeShare}
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 transition-colors hover:border-zinc-950 dark:hover:border-zinc-300 hover:bg-zinc-950 dark:hover:bg-zinc-100 hover:text-white dark:hover:text-zinc-950 cursor-pointer"
+          title="Share options"
+          aria-label="Share via system menu"
+        >
+          <Share2 className="h-4 w-4" />
+        </button>
+      </div>
+    );
+  }
+
+  // Standard Horizontal Variant
+  return (
+    <div className="flex flex-wrap items-center gap-2.5 py-4" aria-label="Social sharing options">
+      <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 mr-2">
+        Share Dispatch:
+      </span>
 
       {/* Copy Link Button */}
       <button
         onClick={handleCopyLink}
-        className="inline-flex items-center gap-1.5 rounded-full border border-[#CCC7BD] bg-white px-3 py-1.5 text-xs font-medium text-[#141312] transition-colors hover:border-[#141312] hover:bg-[#FBF9F5] focus-visible:outline-2 focus-visible:outline-[#C43622]"
+        className="inline-flex items-center gap-1.5 rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3.5 py-1.5 text-xs font-bold text-zinc-800 dark:text-zinc-200 transition-colors hover:border-zinc-950 dark:hover:border-zinc-300 hover:bg-zinc-950 dark:hover:bg-zinc-100 hover:text-white dark:hover:text-zinc-950 cursor-pointer"
         aria-label={copied ? 'Story link copied to clipboard' : 'Copy link to story'}
       >
         {copied ? (
           <>
-            <Check className="h-3.5 w-3.5 text-green-600" />
-            <span className="text-green-700 font-semibold">Copied!</span>
+            <Check className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+            <span className="text-emerald-700 dark:text-emerald-400 font-bold">Link Copied!</span>
           </>
         ) : (
           <>
-            <LinkIcon className="h-3.5 w-3.5 text-[#76716B]" />
+            <LinkIcon className="h-3.5 w-3.5 text-zinc-500 dark:text-zinc-400" />
             <span>Copy Link</span>
           </>
         )}
       </button>
 
-      {/* Accessible direct share links without tracking SDKs */}
+      {/* Native Web Share Button */}
+      <button
+        onClick={handleNativeShare}
+        className="inline-flex items-center gap-1.5 rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3.5 py-1.5 text-xs font-bold text-zinc-800 dark:text-zinc-200 transition-colors hover:border-zinc-950 dark:hover:border-zinc-300 hover:bg-zinc-950 dark:hover:bg-zinc-100 hover:text-white dark:hover:text-zinc-950 cursor-pointer"
+        title="Share via device options"
+        aria-label="Share story via system menu"
+      >
+        <Share2 className="h-3.5 w-3.5 text-zinc-500 dark:text-zinc-400" />
+        <span>Share</span>
+      </button>
+
+      {/* Accessible direct share links */}
       <a
         href={`https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center rounded-full border border-[#CCC7BD] bg-white px-3 py-1.5 text-xs font-medium text-[#141312] hover:border-[#141312] hover:bg-[#FBF9F5] focus-visible:outline-2 focus-visible:outline-[#C43622]"
+        className="inline-flex items-center rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3.5 py-1.5 text-xs font-bold text-zinc-800 dark:text-zinc-200 hover:border-zinc-950 dark:hover:border-zinc-300 hover:bg-zinc-950 dark:hover:bg-zinc-100 hover:text-white dark:hover:text-zinc-950 transition-colors"
         aria-label="Share on X (formerly Twitter)"
       >
-        X
+        𝕏
       </a>
       <a
         href={`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center rounded-full border border-[#CCC7BD] bg-white px-3 py-1.5 text-xs font-medium text-[#141312] hover:border-[#141312] hover:bg-[#FBF9F5] focus-visible:outline-2 focus-visible:outline-[#C43622]"
+        className="inline-flex items-center rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3.5 py-1.5 text-xs font-bold text-zinc-800 dark:text-zinc-200 hover:border-zinc-950 dark:hover:border-zinc-300 hover:bg-zinc-950 dark:hover:bg-zinc-100 hover:text-white dark:hover:text-zinc-950 transition-colors"
         aria-label="Share on Facebook"
       >
         Facebook
@@ -98,7 +172,7 @@ export const ShareButtons: React.FC<ShareButtonsProps> = ({ title, url }) => {
         href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center rounded-full border border-[#CCC7BD] bg-white px-3 py-1.5 text-xs font-medium text-[#141312] hover:border-[#141312] hover:bg-[#FBF9F5] focus-visible:outline-2 focus-visible:outline-[#C43622]"
+        className="inline-flex items-center rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3.5 py-1.5 text-xs font-bold text-zinc-800 dark:text-zinc-200 hover:border-zinc-950 dark:hover:border-zinc-300 hover:bg-zinc-950 dark:hover:bg-zinc-100 hover:text-white dark:hover:text-zinc-950 transition-colors"
         aria-label="Share on LinkedIn"
       >
         LinkedIn

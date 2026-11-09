@@ -31,10 +31,10 @@ export const AdSlot: React.FC<AdSlotProps> = ({ placement, className = '' }) => 
   return (
     <aside
       aria-label="Advertisement"
-      className={`mx-auto my-6 flex flex-col items-center justify-center border border-dashed border-[#CCC7BD] bg-[#F3EFEA] p-4 text-center ${dimensions} ${className}`}
+      className={`mx-auto my-6 flex flex-col items-center justify-center border border-dashed border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-900/60 p-4 text-center ${dimensions} ${className}`}
     >
-      <span className="text-[10px] font-semibold uppercase tracking-widest text-[#76716B]">Advertisement</span>
-      <div className="mt-2 text-xs text-[#76716B]">Sponsored Content Slot ({placement})</div>
+      <span className="text-[10px] font-semibold uppercase tracking-widest text-zinc-500 dark:text-zinc-400">Advertisement</span>
+      <div className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">Sponsored Content Slot ({placement})</div>
     </aside>
   );
 };

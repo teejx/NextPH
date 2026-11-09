@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { newsletterRateLimit, getClientIp, rateLimitResponse } from '../../../lib/rate-limit';
 
 interface NewsletterRequestBody {
   email?: string;
@@ -8,6 +9,13 @@ interface NewsletterRequestBody {
 
 export async function POST(req: NextRequest) {
   try {
+    // Rate limit: 5 requests per 10 minutes per IP
+    const ip = getClientIp(req);
+    const rl = await newsletterRateLimit(ip);
+    if (!rl.success) {
+      return rateLimitResponse(rl, 'Too many subscription attempts. Please wait a few minutes before trying again.');
+    }
+
     const body: NewsletterRequestBody = await req.json();
     const { email, consent, honeypot } = body;
 

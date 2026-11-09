@@ -1,46 +1,239 @@
 @import "tailwindcss";
 
-:root {
-  --color-ground: #FBF9F5;
-  --color-ground-elevated: #FFFFFF;
-  --color-ground-subdued: #F3EFEA;
-  --color-ink-primary: #141312;
-  --color-ink-secondary: #4A4642;
-  --color-ink-muted: #76716B;
-  --color-border-subtle: #E8E4DD;
-  --color-border-strong: #CCC7BD;
-  --color-accent: #C43622;
-  --color-accent-hover: #A62B1A;
-  --color-accent-subdued: #FDF1EE;
+@custom-variant dark (&:where(.dark, .dark *));
 
-  --font-serif: var(--font-editorial-serif), Georgia, Cambria, 'Times New Roman', serif;
-  --font-sans: var(--font-editorial-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+:root {
+  --color-ground: #FFFFFF;
+  --color-dark-surface: #111113;
+  --color-ground-subdued: #F4F4F5;
+  --color-ink-primary: #09090B;
+  --color-ink-secondary: #52525B;
+  --color-ink-muted: #71717A;
+  --color-border-subtle: #E4E4E7;
+  --color-border-strong: #27272A;
+  --color-accent: #09090B;
+}
+
+.dark {
+  --color-ground: #09090B;
+  --color-dark-surface: #18181B;
+  --color-ground-subdued: #121215;
+  --color-ink-primary: #FAFAFA;
+  --color-ink-secondary: #A1A1AA;
+  --color-ink-muted: #71717A;
+  --color-border-subtle: #27272A;
+  --color-border-strong: #3F3F46;
+  --color-accent: #FAFAFA;
 }
 
 body {
   background-color: var(--color-ground);
   color: var(--color-ink-primary);
-  font-family: var(--font-sans);
+  font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Editorial typography utilities */
-.font-serif {
-  font-family: var(--font-serif);
-}
-
-.font-sans {
-  font-family: var(--font-sans);
-}
-
-/* Custom scrollbars and focus rings themed from palette */
-:focus-visible {
-  outline: 2px solid var(--color-accent);
+:focus-visible:not(input):not(textarea):not(select):not(button) {
+  outline: 2px solid #09090B;
   outline-offset: 2px;
 }
 
-::selection {
-  background-color: var(--color-accent-subdued);
-  color: var(--color-accent-hover);
+.dark :focus-visible:not(input):not(textarea):not(select):not(button) {
+  outline: 2px solid #FAFAFA;
 }
+
+input,
+textarea,
+select {
+  border: none;
+  outline: none;
+}
+
+input:focus,
+input:focus-visible,
+textarea:focus,
+textarea:focus-visible,
+button:focus,
+button:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+::selection {
+  background-color: #18181B;
+  color: #FFFFFF;
+}
+
+.dark ::selection {
+  background-color: #FAFAFA;
+  color: #09090B;
+}
+
+/* ── WordPress Gutenberg Block Styling ─────────────────────────────────────── */
+
+/* 1. Gallery Block (Side-by-side / Multi-column Images) */
+.wp-block-gallery,
+figure.wp-block-gallery {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  gap: 0.75rem !important;
+  margin-top: 2rem !important;
+  margin-bottom: 2rem !important;
+  padding: 0 !important;
+  list-style: none !important;
+  width: 100% !important;
+  box-sizing: border-box;
+}
+
+.wp-block-gallery.has-nested-images {
+  align-items: stretch;
+}
+
+.wp-block-gallery.has-nested-images figure.wp-block-image,
+.wp-block-gallery figure.wp-block-image,
+.wp-block-gallery .blocks-gallery-item {
+  margin: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 0;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.wp-block-gallery.has-nested-images figure.wp-block-image img,
+.wp-block-gallery figure.wp-block-image img,
+.wp-block-gallery .blocks-gallery-item img {
+  width: 100% !important;
+  max-width: 100% !important;
+  border-radius: 0.125rem;
+  display: block;
+}
+
+/* Cropped Gallery mode */
+.wp-block-gallery.is-cropped figure.wp-block-image img,
+.wp-block-gallery.is-cropped .blocks-gallery-item img {
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+/* Uncropped Gallery mode */
+.wp-block-gallery:not(.is-cropped) figure.wp-block-image img,
+.wp-block-gallery:not(.is-cropped) .blocks-gallery-item img {
+  height: auto !important;
+  object-fit: contain !important;
+}
+
+/* Column distribution */
+.wp-block-gallery.columns-1 > figure.wp-block-image,
+.wp-block-gallery.columns-1 > .blocks-gallery-item {
+  flex: 1 1 100% !important;
+  max-width: 100% !important;
+}
+
+.wp-block-gallery.columns-2 > figure.wp-block-image,
+.wp-block-gallery.columns-default > figure.wp-block-image,
+.wp-block-gallery.columns-2 > .blocks-gallery-item {
+  flex: 1 1 calc(50% - 0.375rem) !important;
+  max-width: calc(50% - 0.375rem) !important;
+}
+
+.wp-block-gallery.columns-3 > figure.wp-block-image,
+.wp-block-gallery.columns-3 > .blocks-gallery-item {
+  flex: 1 1 calc(33.333% - 0.5rem) !important;
+  max-width: calc(33.333% - 0.5rem) !important;
+}
+
+.wp-block-gallery.columns-4 > figure.wp-block-image,
+.wp-block-gallery.columns-4 > .blocks-gallery-item {
+  flex: 1 1 calc(25% - 0.6rem) !important;
+  max-width: calc(25% - 0.6rem) !important;
+}
+
+/* 2. Columns Block */
+.wp-block-columns {
+  display: flex !important;
+  box-sizing: border-box;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-top: 2rem !important;
+  margin-bottom: 2rem !important;
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .wp-block-columns:not(.is-not-stacked-on-mobile) {
+    flex-wrap: nowrap !important;
+  }
+}
+
+.wp-block-columns.is-not-stacked-on-mobile {
+  flex-wrap: nowrap !important;
+}
+
+.wp-block-column {
+  flex: 1 1 0;
+  min-width: 0;
+  word-break: break-word;
+}
+
+.wp-block-column figure.wp-block-image {
+  margin: 0 !important;
+}
+
+.wp-block-column figure.wp-block-image img {
+  width: 100% !important;
+  height: auto !important;
+  border-radius: 0.125rem;
+}
+
+/* 3. Media & Text Block */
+.wp-block-media-text {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-top: 2rem !important;
+  margin-bottom: 2rem !important;
+  align-items: center;
+}
+
+@media (min-width: 640px) {
+  .wp-block-media-text {
+    grid-template-columns: 50% 1fr;
+  }
+}
+
+/* 4. Image Alignments (Left / Right / Center float) */
+.alignleft {
+  float: left;
+  margin-right: 1.5rem;
+  margin-bottom: 1rem;
+  max-width: 50%;
+}
+
+.alignright {
+  float: right;
+  margin-left: 1.5rem;
+  margin-bottom: 1rem;
+  max-width: 50%;
+}
+
+.aligncenter {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+/* 5. Captions */
+.wp-element-caption,
+.wp-block-gallery figcaption,
+.wp-block-image figcaption {
+  margin-top: 0.5rem;
+  text-align: center;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--color-ink-muted);
+}
+
